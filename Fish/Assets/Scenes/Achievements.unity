@@ -283,7 +283,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c3fc455039a5f148bc0a7c55a52f6fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tipToShow: Master Angler\n-----\nCatch 1000 Fish
+  tipToShow: Master Angler\n-----\nCatch 10K Fish
 --- !u!1 &312306460
 GameObject:
   m_ObjectHideFlags: 0
@@ -475,16 +475,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 344801178}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.4999999, y: 1.4999999, z: 1.8258983}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1791981664}
+  m_Father: {fileID: 1478105769}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 649.9999, y: -165}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &344801180
@@ -838,7 +838,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c3fc455039a5f148bc0a7c55a52f6fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tipToShow: Longer Fish\n-----\nCatch a Fish Longer Than 100 Feet
+  tipToShow: Longer Fish\n-----\nCatch a Fish Longer Than 1K Feet
 --- !u!1 &554085753
 GameObject:
   m_ObjectHideFlags: 0
@@ -928,7 +928,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c3fc455039a5f148bc0a7c55a52f6fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tipToShow: Longest Fish\n-----\nCatch a Fish Longer Than 1000 Feet
+  tipToShow: Longest Fish\n-----\nCatch a Fish Longer Than 10K Feet
 --- !u!1 &639576347
 GameObject:
   m_ObjectHideFlags: 0
@@ -1018,7 +1018,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c3fc455039a5f148bc0a7c55a52f6fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tipToShow: Mega Fish\n-----\nCatch a Fish Heavier Than 1000 Pounds
+  tipToShow: Mega Fish\n-----\nCatch a Fish Heavier Than 10K Pounds
 --- !u!1 &761219564
 GameObject:
   m_ObjectHideFlags: 0
@@ -1413,7 +1413,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c3fc455039a5f148bc0a7c55a52f6fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tipToShow: Huge Fish\n-----\nCatch a Fish Heavier Than 100 Pounds
+  tipToShow: Huge Fish\n-----\nCatch a Fish Heavier Than 1K Pounds
 --- !u!1 &1235647440
 GameObject:
   m_ObjectHideFlags: 0
@@ -1649,6 +1649,7 @@ RectTransform:
   - {fileID: 2102279321}
   - {fileID: 299774084}
   - {fileID: 1791981664}
+  - {fileID: 344801179}
   m_Father: {fileID: 1298126154}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -1745,7 +1746,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c3fc455039a5f148bc0a7c55a52f6fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tipToShow: Long Fish\n-----\nCatch a Fish Longer Than 10 Feet
+  tipToShow: Long Fish\n-----\nCatch a Fish Longer Than 100 Feet
 --- !u!1 &1659910527
 GameObject:
   m_ObjectHideFlags: 0
@@ -2047,7 +2048,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c3fc455039a5f148bc0a7c55a52f6fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tipToShow: Novice Baiter\n-----\nCatch 10 Fish
+  tipToShow: Novice Baiter\n-----\nCatch 100 Fish
 --- !u!1 &1791981663
 GameObject:
   m_ObjectHideFlags: 0
@@ -2078,8 +2079,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1.8258983}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 344801179}
+  m_Children: []
   m_Father: {fileID: 1478105769}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -2377,7 +2377,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c3fc455039a5f148bc0a7c55a52f6fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tipToShow: Big Fish\n-----\nCatch a Fish Heavier Than 10 Pounds
+  tipToShow: Big Fish\n-----\nCatch a Fish Heavier Than 100 Pounds
 --- !u!1 &1975748440
 GameObject:
   m_ObjectHideFlags: 0
@@ -3083,7 +3083,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c3fc455039a5f148bc0a7c55a52f6fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tipToShow: Apprentice Baiter\n-----\nCatch 100 Fish
+  tipToShow: Apprentice Baiter\n-----\nCatch 1K Fish
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

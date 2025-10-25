@@ -46,17 +46,17 @@ public class TrophyScript : MonoBehaviour
     public void UpdateAchievements()
     {
         //10 Lb Fish
-        if (MainPlayer.heaviestAllCaught >= 10)
+        if (MainPlayer.heaviestAllCaught >= 100)
         {
             MainPlayer.achievements[0] = true;
 
             //100 Lb Fish
-            if (MainPlayer.heaviestAllCaught >= 100)
+            if (MainPlayer.heaviestAllCaught >= 1000)
             {
                 MainPlayer.achievements[1] = true;
 
                 //1k Lb Fish
-                if (MainPlayer.heaviestAllCaught >= 1000)
+                if (MainPlayer.heaviestAllCaught >= 10000)
                 {
                     MainPlayer.achievements[2] = true;
                 }
@@ -65,17 +65,17 @@ public class TrophyScript : MonoBehaviour
         }
 
         //10 Meter Fish
-        if (MainPlayer.longestAllCaught >= 10)
+        if (MainPlayer.longestAllCaught >= 100)
         {
             MainPlayer.achievements[4] = true;
 
             //100 Meter Fish
-            if (MainPlayer.longestAllCaught >= 100)
+            if (MainPlayer.longestAllCaught >= 1000)
             {
                 MainPlayer.achievements[5] = true;
 
                 //1000 Meter Fish
-                if (MainPlayer.longestAllCaught >= 1000)
+                if (MainPlayer.longestAllCaught >= 10000)
                 {
                     MainPlayer.achievements[6] = true;
                 }
@@ -83,17 +83,17 @@ public class TrophyScript : MonoBehaviour
         }
 
         //10 Fish Caught
-        if (MainPlayer.numAllCaught >= 10)
+        if (MainPlayer.numAllCaught >= 100)
         {
             MainPlayer.achievements[8] = true;
 
             //100 Fish Caught
-            if (MainPlayer.numAllCaught >= 100)
+            if (MainPlayer.numAllCaught >= 1000)
             {
                 MainPlayer.achievements[9] = true;
 
                 //1000 Fish Caught
-                if (MainPlayer.numAllCaught >= 1000)
+                if (MainPlayer.numAllCaught >= 10000)
                 {
                     MainPlayer.achievements[10] = true;
                 }
