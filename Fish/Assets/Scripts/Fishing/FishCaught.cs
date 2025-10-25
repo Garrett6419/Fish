@@ -1,48 +1,129 @@
 using UnityEngine;
+using System.Collections;
+using TMPro; // Add this for TextMeshPro
+using UnityEngine.UI; // Add this if you are using legacy UI Text
 
 public class FishCaught : MonoBehaviour
 {
-    // We don't need the spawner here anymore
-    // [SerializeField] private FishSpawner fishSpawner; 
     [SerializeField] private GameObject bam;
-    private GameObject fishInstance; // Renamed to 'fishInstance' for clarity
-    private Vector2 FAR = new(1000, 1000);
+    private GameObject fishInstance;
+    [SerializeField] private Player player;
 
-    // SetUp now takes the prefab of the fish that was caught
-    public void SetUp(GameObject caughtFishPrefab)
+    [Header("UI Text Fields")]
+    // Use TextMeshProUGUI if you're using TextMeshPro (recommended)
+    // Use Text if you are using the legacy UI Text
+    [SerializeField] private TextMeshProUGUI weightText;
+    [SerializeField] private TextMeshProUGUI lengthText;
+    [SerializeField] private TextMeshProUGUI caughtText;
+    [SerializeField] private TextMeshProUGUI totalText;
+    [SerializeField] private TextMeshProUGUI pointsText;
+
+    [Header("Animation")]
+    [SerializeField] private float numberAnimationTime = 1.5f;
+
+    private bool canClose = false;
+
+    // SetUp now takes all the calculated values from the Player
+    public void SetUp(GameObject caughtFishPrefab, float weight, float length, int numCaught, float totalMoney, float totalPoints)
     {
         // Activate the "Bam!" effect
-        bam.transform.position = Vector2.zero;
+        
+        gameObject.SetActive(true); // Make sure panel is visible
+        bam.SetActive(true);
 
-        // If we're already showing a fish, destroy it first
+        // --- Instantiate Fish ---
         if (fishInstance != null)
         {
             Destroy(fishInstance);
         }
-
-        // Instantiate the *new* fish as a child of this panel
-        // and position it (e.g., at the center)
         fishInstance = Instantiate(caughtFishPrefab, this.transform);
         fishInstance.transform.localPosition = Vector3.zero;
+
+        // --- Start UI Animations ---
+        // Clear text fields first
+        weightText.text = "";
+        lengthText.text = "";
+        caughtText.text = "";
+        totalText.text = "";
+        pointsText.text = "";
+
+        // Start the number ticking
+        StartCoroutine(AnimateNumbers(weight, length, numCaught, totalMoney, totalPoints));
+
+        // Start the delay for closing
+        canClose = false;
+        StartCoroutine(EnableClosing());
+    }
+
+    private void Update()
+    {
+        // Check if the panel is ready to be closed and the player clicks
+        if (canClose && Input.GetMouseButtonDown(0))
+        {
+            TakeDown();
+        }
+    }
+
+    // This coroutine creates the "count up" effect
+    private IEnumerator AnimateNumbers(float targetWeight, float targetLength, int targetCaught, float targetTotal, float targetPoints)
+    {
+        float elapsedTime = 0f;
+
+        while (elapsedTime < numberAnimationTime)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / numberAnimationTime;
+            // Smooth the transition
+            t = Mathf.Sin(t * Mathf.PI * 0.5f); // Ease-out
+
+            // Lerp (linear interpolate) from 0 to the target value
+            float currentWeight = Mathf.Lerp(0, targetWeight, t);
+            float currentLength = Mathf.Lerp(0, targetLength, t);
+            float currentTotal = Mathf.Lerp(0, targetTotal, t);
+            float currentPoints = Mathf.Lerp(0, targetPoints, t);
+            // We can cast to int for 'caught' so it ticks 0 -> 1 -> 2
+            int currentCaught = (int)Mathf.Lerp(0, targetCaught, t);
+
+            // Update the text fields, using "F2" for 2 decimal places
+            weightText.text = currentWeight.ToString("F2");
+            lengthText.text = currentLength.ToString("F2");
+            caughtText.text = "*" + currentCaught.ToString();
+            totalText.text = "$" + currentTotal.ToString("F2");
+            pointsText.text = currentPoints.ToString("F0"); // "F0" for no decimals
+
+            yield return null; // Wait for the next frame
+        }
+
+        // After the loop, set the text to the final, exact values
+        weightText.text = targetWeight.ToString("F2");
+        lengthText.text = targetLength.ToString("F2");
+        caughtText.text = "*" + targetCaught.ToString();
+        totalText.text = "$" + targetTotal.ToString("F2");
+        pointsText.text = targetPoints.ToString("F0");
+    }
+
+    // This coroutine adds a short delay before the panel can be closed
+    private IEnumerator EnableClosing()
+    {
+        // Wait for a short time to prevent the "reel in" click
+        // from immediately closing the results panel.
+        yield return new WaitForSeconds(0.3f);
+        canClose = true;
     }
 
     public void TakeDown()
     {
-        // Find the player and allow them to cast again
-        // Note: FindAnyObjectByType is a bit slow. If you have many objects,
-        // it's better to have a direct reference to the Player.
-        GameObject.FindAnyObjectByType<Player>().SetCanCast(true);
+        // Stop any coroutines that are still running (like the number ticker)
+        StopAllCoroutines();
 
-        // Hide the "Bam!" effect
-        bam.transform.position = FAR;
 
-        // Destroy the fish we were showing
+        bam.SetActive(false);
+
         if (fishInstance != null)
         {
             Destroy(fishInstance);
         }
 
-        // Hide this panel
         gameObject.SetActive(false);
     }
 }

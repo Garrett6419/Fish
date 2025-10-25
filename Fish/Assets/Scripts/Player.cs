@@ -5,6 +5,8 @@ public class Player : MonoBehaviour
 {
     public float weightMult = 1;
     public float lengthMult = 1;
+    public int weightLevel = 1;
+    public int lengthLevel = 1;
     public int hookLevel = 1;
     public int points = 0;
     public float money = 0;
@@ -24,7 +26,9 @@ public class Player : MonoBehaviour
     private float[] shortestCaught;
 
     // --- Casting Fields (from your code) ---
-    [SerializeField] private Rigidbody2D bobber;
+    [SerializeField] private Rigidbody2D bobberRb;
+    [SerializeField] private GameObject bobber;
+    [SerializeField] private Transform bobberDefault;
     [SerializeField] private int lowCast;
     [SerializeField] private int highCast;
 
@@ -50,28 +54,31 @@ public class Player : MonoBehaviour
         }
         fishCaughtPanel.gameObject.SetActive(false);
         canCast = true;
+        bobberRb = bobber.GetComponent<Rigidbody2D>();
     }
 
     void Update()
     {
         // --- Input Handling ---
+        // NEW: Check if the fish caught panel is active. If it is, don't allow casting/reeling.
+        if (fishCaughtPanel != null && fishCaughtPanel.gameObject.activeInHierarchy)
+        {
+            return; // Stop processing input
+        }
 
         // 1. Check for Cast
-        // We can only cast if 'canCast' is true and we aren't already casting
         if (canCast && !isCasting && Input.GetMouseButtonDown(0))
         {
             Cast();
         }
 
         // 2. Check for Reel
-        // We can only reel if a fish is currently on the line
         if (isFishOn && Input.GetMouseButtonDown(0))
         {
             Reel();
         }
 
         // 3. Update reaction timer
-        // If a fish is on the line, start counting up
         if (isFishOn)
         {
             reactionTimer += Time.deltaTime;
@@ -84,7 +91,9 @@ public class Player : MonoBehaviour
         canCast = false;
         isCasting = true;
         isFishOn = false; // Just in case
-        bobber.AddForce(new(Random.Range(lowCast, highCast), Random.Range(lowCast, highCast)));
+        bobber.SetActive(true);
+        bobber.transform.position = bobberDefault.position;
+        bobberRb.AddForce(new(Random.Range(lowCast, highCast), Random.Range(lowCast, highCast)));
 
         // Start the fishing loop coroutine
         fishingCoroutine = StartCoroutine(CastTime());
@@ -146,7 +155,6 @@ public class Player : MonoBehaviour
     public void Reel()
     {
         Debug.Log("Reeling!");
-        // Stop the fishing loop
         if (fishingCoroutine != null)
         {
             StopCoroutine(fishingCoroutine);
@@ -159,7 +167,6 @@ public class Player : MonoBehaviour
             fishAlertUI.SetActive(false);
         }
 
-        // --- Check Reaction Time ---
         float timingMultiplier = 1.0f;
         if (reactionTimer <= 0.2f)
         {
@@ -169,7 +176,6 @@ public class Player : MonoBehaviour
         else
         {
             Debug.Log("Good catch!");
-            // reactionTimer was > 0.2f but < 1.0f (since CastTime() didn't fire)
         }
 
         ProcessCatch(timingMultiplier);
@@ -177,45 +183,50 @@ public class Player : MonoBehaviour
 
     private void ProcessCatch(float timingMultiplier)
     {
-        float totalWeightAndLength = 0;
         Fish fishData = hookedFishPrefab.GetComponent<Fish>();
-
         if (fishData == null)
         {
             Debug.LogError("Hooked fish prefab is missing Fish component!");
-            SetCanCast(true); // Failsafe
+            SetCanCast(true);
             return;
         }
 
-        // Loop for each hook
+        float totalValueSum = 0; // This will be the Sum of (W+L) for all fish
+        float displayWeight = 0; // Stats for the *first* fish to show on panel
+        float displayLength = 0; // Stats for the *first* fish to show on panel
+
         for (int i = 0; i < hookLevel; i++)
         {
-            // Calculate randomized stats
             float actualWeight = fishData.weight * Random.Range(0.8f, 1.2f);
             float actualLength = fishData.length * Random.Range(0.8f, 1.2f);
 
-            // Apply player multipliers and timing bonus
             actualWeight *= timingMultiplier * weightMult;
             actualLength *= timingMultiplier * lengthMult;
 
-            // Add to the total "base value"
-            totalWeightAndLength += (actualWeight + actualLength);
+            // Store the first fish's stats for display
+            if (i == 0)
+            {
+                displayWeight = actualWeight;
+                displayLength = actualLength;
+            }
 
-            // TODO: Update your stats arrays here
-            // e.g., numAllCaught++, check heaviestAllCaught, etc.
+            // Add this fish's value to the total pot
+            totalValueSum += (actualWeight + actualLength);
         }
 
-        // Final money calculation: (Sum of W+L) * Number of Fish
-        float totalMoneyEarned = totalWeightAndLength * hookLevel;
+        // --- NEW Calculation based on screenshot ---
+        // Total money is the sum of all fish values
+        float totalMoneyEarned = totalValueSum;
+        // Points are Total / 2 (as per "Points: Caught/2" -> I'm assuming it means $Sum/2)
+        float totalPointsEarned = totalMoneyEarned / 2f;
+
         money += totalMoneyEarned;
-        points += hookLevel; // Or however you want to calc points
+        points += (int)totalPointsEarned; // Add to total points
 
         Debug.Log($"Caught {hookLevel} {hookedFishPrefab.name}(s) for ${totalMoneyEarned}!");
 
-        // --- Show the results panel ---
-        // We pass the *prefab* of the fish we caught so the panel can show it
-        fishCaughtPanel.gameObject.SetActive(true);
-        fishCaughtPanel.SetUp(hookedFishPrefab);
+        // --- Show the results panel with all the new info ---
+        fishCaughtPanel.SetUp(hookedFishPrefab, displayWeight, displayLength, hookLevel, totalMoneyEarned, totalPointsEarned);
     }
 
 
