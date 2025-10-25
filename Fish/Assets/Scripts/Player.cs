@@ -23,6 +23,7 @@ public class Player : MonoBehaviour
     public int hookLevel = 1;
     public int points = 0;
     public float money = 0;
+    public bool[] achievements = { false, false, false, false, false, false, false, false, false, false, false, false };
     [SerializeField] public float debt = 10000;
 
     // --- Casting Fields ---

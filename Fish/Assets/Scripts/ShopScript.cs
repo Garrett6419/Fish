@@ -78,6 +78,11 @@ public class ShopScript : MonoBehaviour
         hookButton.text = "Upgrade # Of Hooks\n" + (int)Math.Pow(2, (MainPlayer.hookLevel - 1)) + " Points";
     }
 
+    public void ClickedHat()
+    {
+        MainPlayer.achievements[11] = true;
+    }
+
     public void OnExit()
     {
         //Change Scene back to the beach
