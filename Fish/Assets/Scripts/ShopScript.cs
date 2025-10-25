@@ -1,18 +1,47 @@
 using UnityEngine;
 using System.Collections;
 using System;
+using TMPro;
+using UnityEngine.SceneManagement;
 
 public class ShopScript : MonoBehaviour
 {
-    public Player MainPlayer;
+    private GameObject PlayerObj;
+    private Player MainPlayer;
     public float Mult = 1.5F;
+
+    public TMP_Text playerPoints;
+    public TMP_Text weightButton;
+    public TMP_Text lengthButton;
+    public TMP_Text hookButton;
+
+    private Scene shopScene;
+    
+    public void Start()
+    {
+        //Initialize the shop scene on start
+        shopScene = SceneManager.GetSceneByName("Shop");
+
+        PlayerObj = GameObject.FindWithTag("Player");
+        MainPlayer = PlayerObj.GetComponent<Player>();
+    }
+
+    //Runs every tick
+    //UpdateTexts if the scene is open
+    public void Update()
+    {
+        if (shopScene.isLoaded)
+        {
+            UpdateTexts();
+        }
+    }
+
 
     public void UpgradeWeight()
     {
-        //Check for players points
-        if (MainPlayer.points >= Math.Pow(2, MainPlayer.weightLevel))
+        //Check for players points and then upgrade the weight mult
+        if (MainPlayer.points >= (int)Math.Pow(2, MainPlayer.weightLevel))
         {
-            Debug.Log(message: "Upgraded Weight");
             MainPlayer.weightMult *= Mult;
             MainPlayer.points -= (int)Math.Pow(2, MainPlayer.weightLevel);
             MainPlayer.weightLevel += 1;
@@ -21,9 +50,9 @@ public class ShopScript : MonoBehaviour
 
     public void UpgradeLength()
     {
-        if (MainPlayer.points >= Math.Pow(2, MainPlayer.lengthLevel))
+        //Check for player points and then upgrade the player's mult
+        if (MainPlayer.points >= (int)Math.Pow(2, MainPlayer.lengthLevel))
         {
-            Debug.Log(message: "Upgraded Length");
             MainPlayer.lengthMult *= Mult;
             MainPlayer.points -= (int)Math.Pow(2, MainPlayer.lengthLevel);
             MainPlayer.lengthLevel += 1;
@@ -32,19 +61,27 @@ public class ShopScript : MonoBehaviour
 
     public void UpgradeHooks()
     {
-        if (MainPlayer.points >= Math.Pow(2, MainPlayer.hookLevel))
+        //Check if the player has the necessary points and then increment the hookLevel
+        if (MainPlayer.points >= (int)Math.Pow(2, MainPlayer.hookLevel))
         {
-            Debug.Log(message: "Upgraded Hooks");
             MainPlayer.points -= (int)Math.Pow(2, MainPlayer.hookLevel);
             MainPlayer.hookLevel += 1;
         }
     }
 
+    public void UpdateTexts()
+    {
+        //Update each TMP every tick
+        playerPoints.text = "" + MainPlayer.points + " Points";
+        weightButton.text = "Upgrade Fish Weight\n" + (int)Math.Pow(2, MainPlayer.weightLevel) + " Points";
+        lengthButton.text = "Upgrade Fish Length\n" + (int)Math.Pow(2, MainPlayer.lengthLevel) + " Points";
+        hookButton.text = "Upgrade # Of Hooks\n" + (int)Math.Pow(2, MainPlayer.hookLevel) + " Points";
+    }
+
     public void OnExit()
     {
-        //Change Scene
-        Debug.Log(message: "Exited");
-        return;
+        //Change Scene back to the beach
+        SceneManager.LoadScene("Beach");
     }
 
 }
