@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 08edec84a84cac640934f915970a99c9
+guid: 94d5bb040d2534d489c891049fe80261
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7495214322089233215
-    second: TrophyCase (1)_0
+      213: -7881252472842011976
+    second: TrophyCaseExtended_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,7 +113,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: TrophyCase (1)_0
+      name: TrophyCaseExtended_0
       rect:
         serializedVersion: 2
         x: 0
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: f3b8c8fe6b9540860800000000000000
-      internalID: 7495214322089233215
+      spriteID: 8ba3513f1aa20a290800000000000000
+      internalID: -7881252472842011976
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      TrophyCase (1)_0: 7495214322089233215
+      TrophyCaseExtended_0: -7881252472842011976
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

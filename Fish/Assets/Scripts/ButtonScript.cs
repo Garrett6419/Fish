@@ -20,13 +20,22 @@ public class StartGameScript : MonoBehaviour
         
     }
 
-    public void OpenTrophyCase()
+    public void AchievementScene()
     {
         SceneManager.LoadScene("Achievements");
     }
 
-    public void StartGame()
+    public void BeachScene()
     {
         SceneManager.LoadScene("Beach");
     }
+
+    public void TitleScene()
+    {
+        SceneManager.LoadScene("Start");
+    }
+
+
+
+    
 }
