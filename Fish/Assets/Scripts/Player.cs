@@ -2,7 +2,6 @@ using System.Collections;
 using UnityEngine;
 using TMPro; // For TextMeshPro
 using UnityEngine.SceneManagement; // For scene management
-using UnityEngine.EventSystems;
 
 /// <summary>
 /// This is the main player controller script.
@@ -16,6 +15,7 @@ public class Player : MonoBehaviour
     // --- Singleton Instance ---
     public static Player instance;
 
+    // --- State Bools ---
     private bool inputDisabled = false;
     private bool inFishingScene = false;
 
@@ -28,7 +28,11 @@ public class Player : MonoBehaviour
     public int points = 0;
     public float money = 0;
     public bool[] achievements = { false, false, false, false, false, false, false, false, false, false, false, false };
-    [SerializeField] public float debt = 10000;
+
+    [Header("Debt")]
+    [SerializeField] private float baseDebt = 1000000;
+    public float currentDebt;
+    [SerializeField] private float interestRate = 1.05f; // 5% interest per day
 
     // --- Casting Fields ---
     [Header("Casting")]
@@ -117,8 +121,7 @@ public class Player : MonoBehaviour
     /// </summary>
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // --- THIS IS THE CRITICAL FIX ---
-        // Change "BeachScene" to "Beach"
+        // Check for the main fishing scene
         if (scene.name == "Beach")
         {
             Debug.Log("Beach scene loaded, re-linking references...");
@@ -131,6 +134,7 @@ public class Player : MonoBehaviour
         }
         else
         {
+            // We are in the Shop, DayOver, Dialogue, etc.
             inFishingScene = false;
         }
     }
@@ -203,6 +207,8 @@ public class Player : MonoBehaviour
     {
         // Set the starting time
         gameTimeInMinutes = dayStartMinutes;
+        // Set the current debt to the base debt on first start
+        currentDebt = baseDebt;
 
         // Failsafe to link references if the game starts in the Beach scene
         RelinkReferences();
@@ -211,35 +217,42 @@ public class Player : MonoBehaviour
     void Update()
     {
         // 1. Check for UI / Paused State
+        // If catch panel is open, pause time and stop all input
         if (fishCaughtPanel != null && fishCaughtPanel.gameObject.activeInHierarchy)
         {
             return;
         }
 
-        if(!inFishingScene)
+        // 2. Check for other scenes
+        // If we are not in the fishing scene (e.g., Shop), pause time
+        if (!inFishingScene)
         {
             return;
         }
 
+        // 3. Advance Time
+        // Time will now run while casting and reeling
         gameTimeInMinutes += Time.deltaTime * timeScale;
 
+        // Check for end of day
         if (gameTimeInMinutes >= dayEndMinutes)
         {
             EndDay();
             return;
         }
+
+        // Update UI clock
         if (dayTimeDebt != null)
             UpdateDayTimeDebtUI();
 
-        // 3. Check for Scene Change Input
+        // 4. Check for Scene Change Input
         if (Input.GetMouseButtonDown(1) && !isCasting)
         {
             SceneManager.LoadScene("Shop");
             return;
         }
 
-        // 4. Check for Fishing Input
-        // This check will now only pass if the click was NOT on a UI element
+        // 5. Check for Fishing Input
         if (canCast && !isCasting && !inputDisabled && Input.GetMouseButtonDown(0))
         {
             Cast();
@@ -249,7 +262,7 @@ public class Player : MonoBehaviour
             Reel();
         }
 
-        // 5. Update Reaction Timer
+        // 6. Update Reaction Timer
         if (isFishOn)
         {
             reactionTimer += Time.deltaTime;
@@ -258,9 +271,9 @@ public class Player : MonoBehaviour
 
     #endregion
 
-        // -------------------------------------------------------------------
+    // -------------------------------------------------------------------
 
-        #region Fishing Core Loop
+    #region Fishing Core Loop
 
     public void Cast()
     {
@@ -315,7 +328,7 @@ public class Player : MonoBehaviour
     {
         // Hide and reset the bobber
         bobber.SetActive(false);
-        bobberRb.linearVelocity = Vector2.zero;
+        bobberRb.linearVelocity = Vector2.zero; // Use .velocity, not .linearVelocity
         bobberRb.angularVelocity = 0f;
 
         Debug.Log("Reeling!");
@@ -342,10 +355,18 @@ public class Player : MonoBehaviour
 
     private void ProcessCatch(float timingMultiplier)
     {
+        // Safety check for the prefab
+        if (hookedFishPrefab == null)
+        {
+            Debug.LogError("ProcessCatch FAILED: hookedFishPrefab was null.");
+            SetCanCast(true);
+            return;
+        }
+
         Fish fishData = hookedFishPrefab.GetComponent<Fish>();
         if (fishData == null)
         {
-            Debug.LogError("Hooked fish prefab is missing Fish component!");
+            Debug.LogError($"Hooked fish prefab '{hookedFishPrefab.name}' is missing Fish component!");
             SetCanCast(true);
             return;
         }
@@ -384,13 +405,21 @@ public class Player : MonoBehaviour
 
         // Update player totals
         money += totalMoneyEarned;
-        debt -= totalMoneyEarned;
+        currentDebt -= totalMoneyEarned;
         points += (int)totalPointsEarned;
 
         Debug.Log($"Caught {hookLevel} {hookedFishPrefab.name}(s) for ${totalMoneyEarned}!");
 
-        // Show the results panel
-        fishCaughtPanel.SetUp(hookedFishPrefab, displayWeight, displayLength, hookLevel, totalMoneyEarned, totalPointsEarned);
+        // Safety check for the UI panel
+        if (fishCaughtPanel != null)
+        {
+            fishCaughtPanel.SetUp(hookedFishPrefab, displayWeight, displayLength, hookLevel, totalMoneyEarned, totalPointsEarned);
+        }
+        else
+        {
+            Debug.LogError("ProcessCatch FAILED: fishCaughtPanel reference is null.");
+            SetCanCast(true);
+        }
     }
 
     /// <summary>
@@ -422,33 +451,99 @@ public class Player : MonoBehaviour
     /// </summary>
     private void EndDay()
     {
-        Debug.Log("Day has ended. Loading DayOver scene.");
+        Debug.Log($"Day {day} has ended.");
 
         // Stop all fishing activity
         SetCanCast(false);
 
-        // Load the summary scene
-        // *** IMPORTANT: Change "DayOver" to your exact scene name ***
-        SceneManager.LoadScene("DayOver");
+        // Check for end of 7-day cycle OR if debt is paid off
+        if (day >= 7 || currentDebt <= 0)
+        {
+            Debug.Log("End of day. Checking win/loss condition...");
+
+            // Check win condition (money >= debt OR debt is negative)
+            if (money >= currentDebt || currentDebt <= 0)
+            {
+                // --- THIS IS THE BONUS CALCULATION ---
+                // It now only runs at the end of the day.
+                int daysRemaining = 7 - day; // Calculate remaining days
+                if (daysRemaining > 0)
+                {
+                    int earlyBonus = daysRemaining * 250;
+                    points += earlyBonus;
+                    Debug.Log($"Debt paid off {daysRemaining} days early! +{earlyBonus} points!");
+                }
+                else
+                {
+                    Debug.Log("Debt paid off!");
+                }
+                // ---------------------------------
+
+                // Player wins
+                Debug.Log("Victory! Loading VictoryDialogue...");
+                SceneManager.LoadScene("VictoryDialogue");
+            }
+            else
+            {
+                // Player loses
+                Debug.Log("Defeat! Loading GameOverDialogue...");
+                SceneManager.LoadScene("GameOverDialogue");
+            }
+        }
+        else
+        {
+            // If it's not the end of Day 7 and debt isn't paid, proceed to normal DayOver scene
+            SceneManager.LoadScene("DayOver");
+        }
     }
 
     /// <summary>
-    /// This is called by the DayOver scene to reset the clock
+    /// This is called by the DayOver scene (on days 1-6) to reset the clock
     /// and load the next fishing day.
     /// </summary>
     public void StartNextDay()
     {
         day++;
         gameTimeInMinutes = dayStartMinutes;
-        fishCaughtToday = 0; // Reset daily fish count
-        canCast = true;
+        fishCaughtToday = 0;
+
+        // --- ADD INTEREST ---
+        // Only add interest if the debt hasn't been paid off
+        if (currentDebt > 0)
+        {
+            currentDebt *= interestRate;
+        }
+        // --------------------
+
+        canCast = true; // Re-enable casting
 
         Debug.Log($"Day {day} has begun!");
+        SceneManager.LoadScene("Beach");
+    }
 
-        // TODO: Add mafia interest to debt?
-        // debt *= 1.1f; 
+    /// <summary>
+    /// Called from the Victory Screen to start a new 7-day cycle
+    /// with 10x increased debt.
+    /// </summary>
+    public void ContinueGame()
+    {
+        Debug.Log("Continuing game! Base debt will be 10x.");
 
-        // *** IMPORTANT: Change "BeachScene" to your exact scene name ***
+        // Increase BASE debt for the new cycle
+        baseDebt *= 10;
+
+        // Set the new current debt to the new base debt
+        currentDebt = baseDebt;
+
+        // Reset day to 1
+        day = 1;
+        gameTimeInMinutes = dayStartMinutes;
+        fishCaughtToday = 0;
+
+        // Player keeps their money, stats, and achievements
+        canCast = true; // Enable casting
+
+        // Load the Beach scene to start the new cycle
         SceneManager.LoadScene("Beach");
     }
 
@@ -464,7 +559,8 @@ public class Player : MonoBehaviour
         int minutes = (int)(gameTimeInMinutes % 60);
 
         string timeString = $"{hours:00}:{minutes:00}";
-        string debtString = $"${debt:F2}";
+        // Display current debt
+        string debtString = $"${currentDebt:F2}";
 
         dayTimeDebt.text = $"DAY: {day}\tTIME: {timeString}\nDEBT: {debtString}";
     }

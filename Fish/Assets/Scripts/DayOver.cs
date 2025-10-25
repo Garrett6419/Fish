@@ -31,7 +31,7 @@ public class DayOver : MonoBehaviour
 
         int day = player.day;
         int fishCaught = player.GetFishCaughtToday();
-        float debt = player.debt;
+        float debt = player.currentDebt;
 
         // Start the animation
         StartCoroutine(AnimateSummary(day, fishCaught, debt));

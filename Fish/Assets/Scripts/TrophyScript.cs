@@ -116,7 +116,7 @@ public class TrophyScript : MonoBehaviour
         }
 
         //Check for game ended
-        if (MainPlayer.debt <= 0)
+        if (MainPlayer.currentDebt <= 0)
         {
             MainPlayer.achievements[7] = true;
         }
