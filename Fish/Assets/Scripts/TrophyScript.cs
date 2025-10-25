@@ -7,7 +7,7 @@ public class TrophyScript : MonoBehaviour
 {
     public Image[] blackouts;
     private GameObject PlayerObj;
-    private static Player MainPlayer;
+    private Player MainPlayer;
 
     private Scene trophyScene;
 
@@ -30,7 +30,7 @@ public class TrophyScript : MonoBehaviour
         }
     }
 
-    public static void UpdateTrophyCase()
+    public void UpdateTrophyCase()
     {
         for (int i = 0; i < 12; i++)
         {
