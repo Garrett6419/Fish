@@ -2,6 +2,9 @@ using System.Collections;
 using UnityEngine;
 using TMPro; // For TextMeshPro
 using UnityEngine.SceneManagement; // For scene management
+using System.IO; //For Save Data
+using System; //For Save Data
+using Newtonsoft.Json; //For Save Data
 
 /// <summary>
 /// This is the main player controller script.
@@ -11,6 +14,11 @@ using UnityEngine.SceneManagement; // For scene management
 public class Player : MonoBehaviour
 {
     #region Fields
+
+    // Save Data Stuff
+    private IDataService DataService = new JsonDataService();
+    private bool EncryptionEnabled = false;
+    public PlayerStats PlayerStats = new PlayerStats();
 
     // --- Singleton Instance ---
     public static Player instance;
@@ -25,7 +33,6 @@ public class Player : MonoBehaviour
     public int weightLevel = 1;
     public int lengthLevel = 1;
     public int hookLevel = 1;
-    public bool[] achievements = { false, false, false, false, false, false, false, false, false, false, false, false };
 
     [Header("Economy & Score")]
     public long money = 0;
@@ -72,19 +79,19 @@ public class Player : MonoBehaviour
     private const float dayEndMinutes = 20 * 60;  // 8:00 PM (20:00)
 
     // --- Stats Tracking Fields ---
-    [Header("Overall Fish Stats")]
-    public int numAllCaught = 0;
-    public float heaviestAllCaught = 0;
-    public float lightestAllCaught = float.MaxValue;
-    public float longestAllCaught = 0;
-    public float shortestAllCaught = float.MaxValue;
+    //[Header("Overall Fish Stats")]
+    //public int numAllCaught = 0;
+    //public float heaviestAllCaught = 0;
+    //public float lightestAllCaught = float.MaxValue;
+    //public float longestAllCaught = 0;
+    //public float shortestAllCaught = float.MaxValue;
 
-    [Header("Per-Fish-Type Stats")]
-    public int[] numCaught;
-    public float[] heaviestCaught;
-    public float[] lightestCaught;
-    public float[] longestCaught;
-    public float[] shortestCaught;
+    //[Header("Per-Fish-Type Stats")]
+    //public int[] numCaught};
+    //public float[] heaviestCaught;
+    //public float[] lightestCaught;
+    //public float[] longestCaught;
+    //public float[] shortestCaught;
 
     [Header("Daily Stats")]
     private int fishCaughtToday = 0;
@@ -173,22 +180,22 @@ public class Player : MonoBehaviour
             if (dayTimeDebt != null) UpdateDayTimeDebtUI();
 
             // Initialize stat arrays if this is the first time
-            if (numCaught == null && fishSpawner != null)
+            if (PlayerStats.numCaught == null && fishSpawner != null)
             {
                 int fishTypeCount = fishSpawner.GetFishTypeCount();
                 Debug.Log($"Initializing stats for {fishTypeCount} fish types.");
 
-                numCaught = new int[fishTypeCount];
-                heaviestCaught = new float[fishTypeCount];
-                lightestCaught = new float[fishTypeCount];
-                longestCaught = new float[fishTypeCount];
-                shortestCaught = new float[fishTypeCount];
+                PlayerStats.numCaught = new int[fishTypeCount];
+                PlayerStats.heaviestCaught = new float[fishTypeCount];
+                PlayerStats.lightestCaught = new float[fishTypeCount];
+                PlayerStats.longestCaught = new float[fishTypeCount];
+                PlayerStats.shortestCaught = new float[fishTypeCount];
 
                 // Initialize lightest/shortest arrays to MaxValue
                 for (int i = 0; i < fishTypeCount; i++)
                 {
-                    lightestCaught[i] = float.MaxValue;
-                    shortestCaught[i] = float.MaxValue;
+                    PlayerStats.lightestCaught[i] = float.MaxValue;
+                    PlayerStats.shortestCaught[i] = float.MaxValue;
                 }
             }
         }
@@ -295,7 +302,7 @@ public class Player : MonoBehaviour
         // Position and launch bobber
         bobber.gameObject.SetActive(true);
         bobber.transform.position = bobberDefault.position;
-        bobberRb.AddForce(new(Random.Range(lowCast, highCast), Random.Range(lowCast, highCast)));
+        bobberRb.AddForce(new(UnityEngine.Random.Range(lowCast, highCast), UnityEngine.Random.Range(lowCast, highCast)));
         bobber.SetState(Bobber.BobberState.Waiting);
 
         fishingCoroutine = StartCoroutine(CastTime());
@@ -316,7 +323,7 @@ public class Player : MonoBehaviour
 
             hookedFishPrefab = fishSpawner.GetFish(out hookedFishID);
 
-            float waitTime = Random.Range(2.0f, 3.0f);
+            float waitTime = UnityEngine.Random.Range(2.0f, 3.0f);
             yield return new WaitForSeconds(waitTime);
 
             if (!isCasting) yield break;
@@ -423,8 +430,8 @@ public class Player : MonoBehaviour
 
         for (int i = 0; i < hookLevel; i++)
         {
-            float actualWeight = fishData.weight * Random.Range(0.8f, 1.2f);
-            float actualLength = fishData.length * Random.Range(0.8f, 1.2f);
+            float actualWeight = fishData.weight * UnityEngine.Random.Range(0.8f, 1.2f);
+            float actualLength = fishData.length * UnityEngine.Random.Range(0.8f, 1.2f);
             actualWeight *= timingMultiplier * weightMult;
             actualLength *= timingMultiplier * lengthMult;
 
@@ -498,6 +505,8 @@ public class Player : MonoBehaviour
     private void EndDay()
     {
         Debug.Log($"Day {day} has ended.");
+
+        SerializeJson();
 
         // Stop all fishing activity
         SetCanCast(false);
@@ -623,26 +632,26 @@ public class Player : MonoBehaviour
         fishCaughtToday++;
 
         // --- 2. Update Overall Stats ---
-        numAllCaught++;
+        PlayerStats.numAllCaught++;
 
-        if (weight > heaviestAllCaught) heaviestAllCaught = weight;
-        if (weight < lightestAllCaught) lightestAllCaught = weight;
-        if (length > longestAllCaught) longestAllCaught = length;
-        if (length < shortestAllCaught) shortestAllCaught = length;
+        if (weight > PlayerStats.heaviestAllCaught) PlayerStats.heaviestAllCaught = weight;
+        if (weight < PlayerStats.lightestAllCaught) PlayerStats.lightestAllCaught = weight;
+        if (length > PlayerStats.longestAllCaught) PlayerStats.longestAllCaught = length;
+        if (length < PlayerStats.shortestAllCaught) PlayerStats.shortestAllCaught = length;
 
         // --- 3. Update Per-Fish Stats ---
-        if (id < 0 || numCaught == null || id >= numCaught.Length)
+        if (id < 0 || PlayerStats.numCaught == null || id >= PlayerStats.numCaught.Length)
         {
             Debug.LogError($"Invalid fish ID {id} or stats array not initialized!");
             return;
         }
 
-        numCaught[id]++;
+        PlayerStats.numCaught[id]++;
 
-        if (weight > heaviestCaught[id]) heaviestCaught[id] = weight;
-        if (weight < lightestCaught[id]) lightestCaught[id] = weight;
-        if (length > longestCaught[id]) longestCaught[id] = length;
-        if (length < shortestCaught[id]) shortestCaught[id] = length;
+        if (weight > PlayerStats.heaviestCaught[id]) PlayerStats.heaviestCaught[id] = weight;
+        if (weight < PlayerStats.lightestCaught[id]) PlayerStats.lightestCaught[id] = weight;
+        if (length > PlayerStats.longestCaught[id]) PlayerStats.longestCaught[id] = length;
+        if (length < PlayerStats.shortestCaught[id]) PlayerStats.shortestCaught[id] = length;
     }
 
     /// <summary>
@@ -654,4 +663,37 @@ public class Player : MonoBehaviour
     }
 
     #endregion
+
+    // -------------------------------------------------------------------
+
+    #region Sava Data Methods
+
+    public void ToggleEncryption(bool EncryptionEnabled)
+    {
+        this.EncryptionEnabled = EncryptionEnabled;
+    }
+
+    public void SerializeJson()
+    {
+        if (DataService.SaveData("/player-stats.json", PlayerStats, EncryptionEnabled))
+        {
+            try
+            {
+                PlayerStats data = DataService.LoadData<PlayerStats>("/player-stats.json", EncryptionEnabled);
+            }
+            catch (Exception e)
+            {
+                Debug.Log($"Error {e.Message}");
+            }
+        }
+        else
+        {
+            Debug.Log("Couldn't Save File");
+        }
+    }
+
+    #endregion
+
+    // -------------------------------------------------------------------
+
 }

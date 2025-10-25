@@ -23,6 +23,7 @@ public class StartGameScript : MonoBehaviour
     public void AchievementScene()
     {
         SceneManager.LoadScene("Achievements");
+        MainPlayer.SerializeJson();
     }
 
     public void BeachScene()
@@ -33,6 +34,7 @@ public class StartGameScript : MonoBehaviour
     public void TitleScene()
     {
         SceneManager.LoadScene("Start");
+        MainPlayer.SerializeJson();
     }
 
     public void IntroDialogue()

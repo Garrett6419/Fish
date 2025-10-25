@@ -1,16 +1,8 @@
-using UnityEngine;
 
-public class IDataServices : MonoBehaviour
+
+public interface IDataService
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    bool SaveData<T>(string RelativePath, T Data, bool Encrypted);
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    T LoadData<T>(string RelativePath, bool Encrypted);
 }

@@ -36,7 +36,7 @@ public class TrophyScript : MonoBehaviour
     {
         for (int i = 0; i < 12; i++)
         {
-            if (MainPlayer.achievements[i])
+            if (MainPlayer.PlayerStats.achievements[i])
             {
                 blackouts[i].enabled = false;
             }
@@ -46,63 +46,63 @@ public class TrophyScript : MonoBehaviour
     public void UpdateAchievements()
     {
         //10 Lb Fish
-        if (MainPlayer.heaviestAllCaught >= 100)
+        if (MainPlayer.PlayerStats.heaviestAllCaught >= 100)
         {
-            MainPlayer.achievements[0] = true;
+            MainPlayer.PlayerStats.achievements[0] = true;
 
             //100 Lb Fish
-            if (MainPlayer.heaviestAllCaught >= 1000)
+            if (MainPlayer.PlayerStats.heaviestAllCaught >= 1000)
             {
-                MainPlayer.achievements[1] = true;
+                MainPlayer.PlayerStats.achievements[1] = true;
 
                 //1k Lb Fish
-                if (MainPlayer.heaviestAllCaught >= 10000)
+                if (MainPlayer.PlayerStats.heaviestAllCaught >= 10000)
                 {
-                    MainPlayer.achievements[2] = true;
+                    MainPlayer.PlayerStats.achievements[2] = true;
                 }
             }
            
         }
 
         //10 Meter Fish
-        if (MainPlayer.longestAllCaught >= 100)
+        if (MainPlayer.PlayerStats.longestAllCaught >= 100)
         {
-            MainPlayer.achievements[4] = true;
+            MainPlayer.PlayerStats.achievements[4] = true;
 
             //100 Meter Fish
-            if (MainPlayer.longestAllCaught >= 1000)
+            if (MainPlayer.PlayerStats.longestAllCaught >= 1000)
             {
-                MainPlayer.achievements[5] = true;
+                MainPlayer.PlayerStats.achievements[5] = true;
 
                 //1000 Meter Fish
-                if (MainPlayer.longestAllCaught >= 10000)
+                if (MainPlayer.PlayerStats.longestAllCaught >= 10000)
                 {
-                    MainPlayer.achievements[6] = true;
+                    MainPlayer.PlayerStats.achievements[6] = true;
                 }
             }
         }
 
         //10 Fish Caught
-        if (MainPlayer.numAllCaught >= 100)
+        if (MainPlayer.PlayerStats.numAllCaught >= 100)
         {
-            MainPlayer.achievements[8] = true;
+            MainPlayer.PlayerStats.achievements[8] = true;
 
             //100 Fish Caught
-            if (MainPlayer.numAllCaught >= 1000)
+            if (MainPlayer.PlayerStats.numAllCaught >= 1000)
             {
-                MainPlayer.achievements[9] = true;
+                MainPlayer.PlayerStats.achievements[9] = true;
 
                 //1000 Fish Caught
-                if (MainPlayer.numAllCaught >= 10000)
+                if (MainPlayer.PlayerStats.numAllCaught >= 10000)
                 {
-                    MainPlayer.achievements[10] = true;
+                    MainPlayer.PlayerStats.achievements[10] = true;
                 }
             }
         }
 
         //Checking if all fish have been caught
         bool allFishCaught = true;
-        foreach (int num in MainPlayer.numCaught)
+        foreach (int num in MainPlayer.PlayerStats.numCaught)
         {
             if (num < 1)
             {
@@ -112,13 +112,13 @@ public class TrophyScript : MonoBehaviour
 
         if (allFishCaught)
         {
-            MainPlayer.achievements[3] = true;
+            MainPlayer.PlayerStats.achievements[3] = true;
         }
 
         //Check for game ended
         if (MainPlayer.currentDebt <= 0)
         {
-            MainPlayer.achievements[7] = true;
+            MainPlayer.PlayerStats.achievements[7] = true;
         }
 
         

@@ -81,7 +81,7 @@ public class ShopScript : MonoBehaviour
 
     public void ClickedHat()
     {
-        MainPlayer.achievements[11] = true;
+        MainPlayer.PlayerStats.achievements[11] = true;
     }
 
     public void OnExit()
