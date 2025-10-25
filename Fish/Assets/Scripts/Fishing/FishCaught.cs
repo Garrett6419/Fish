@@ -7,7 +7,7 @@ public class FishCaught : MonoBehaviour
 {
     [SerializeField] private GameObject bam;
     private GameObject fishInstance;
-    [SerializeField] private Player player;
+    [SerializeField] private Player player; // Make sure to assign this in the Inspector!
 
     [Header("UI Text Fields")]
     // Use TextMeshProUGUI if you're using TextMeshPro (recommended)
@@ -27,7 +27,7 @@ public class FishCaught : MonoBehaviour
     public void SetUp(GameObject caughtFishPrefab, float weight, float length, int numCaught, float totalMoney, float totalPoints)
     {
         // Activate the "Bam!" effect
-        
+
         gameObject.SetActive(true); // Make sure panel is visible
         bam.SetActive(true);
 
@@ -37,7 +37,7 @@ public class FishCaught : MonoBehaviour
             Destroy(fishInstance);
         }
         fishInstance = Instantiate(caughtFishPrefab, this.transform);
-        fishInstance.transform.localPosition = Vector3.zero;
+        fishInstance.transform.localPosition = new(0, 1.0f);
 
         // --- Start UI Animations ---
         // Clear text fields first
@@ -85,21 +85,21 @@ public class FishCaught : MonoBehaviour
             int currentCaught = (int)Mathf.Lerp(0, targetCaught, t);
 
             // Update the text fields, using "F2" for 2 decimal places
-            weightText.text = currentWeight.ToString("F2");
-            lengthText.text = currentLength.ToString("F2");
-            caughtText.text = "*" + currentCaught.ToString();
-            totalText.text = "$" + currentTotal.ToString("F2");
-            pointsText.text = currentPoints.ToString("F0"); // "F0" for no decimals
+            weightText.text = "Weight:\t" + currentWeight.ToString("F2");
+            lengthText.text = "Length:\t" + currentLength.ToString("F2");
+            caughtText.text = "Caught:\t*" + currentCaught.ToString();
+            totalText.text = "Sum:\t\t$" + currentTotal.ToString("F2");
+            pointsText.text = "Points:\t" + currentPoints.ToString("F0"); // "F0" for no decimals
 
             yield return null; // Wait for the next frame
         }
 
         // After the loop, set the text to the final, exact values
-        weightText.text = targetWeight.ToString("F2");
-        lengthText.text = targetLength.ToString("F2");
-        caughtText.text = "*" + targetCaught.ToString();
-        totalText.text = "$" + targetTotal.ToString("F2");
-        pointsText.text = targetPoints.ToString("F0");
+        weightText.text = "Weight:\t" + targetWeight.ToString("F2");
+        lengthText.text = "Length:\t" + targetLength.ToString("F2");
+        caughtText.text = "Caught:\t*" + targetCaught.ToString();
+        totalText.text = "Sum:\t\t$" + targetTotal.ToString("F2");
+        pointsText.text = "Points:\t" + targetPoints.ToString("F0");
     }
 
     // This coroutine adds a short delay before the panel can be closed
@@ -116,7 +116,6 @@ public class FishCaught : MonoBehaviour
         // Stop any coroutines that are still running (like the number ticker)
         StopAllCoroutines();
 
-
         bam.SetActive(false);
 
         if (fishInstance != null)
@@ -125,5 +124,15 @@ public class FishCaught : MonoBehaviour
         }
 
         gameObject.SetActive(false);
+
+        // --- ADDED: Tell the player they can cast again ---
+        if (player != null)
+        {
+            player.SetCanCast(true);
+        }
+        else
+        {
+            Debug.LogError("Player reference not set on FishCaught panel!");
+        }
     }
 }

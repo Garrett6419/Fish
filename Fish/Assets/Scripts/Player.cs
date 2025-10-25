@@ -126,7 +126,7 @@ public class Player : MonoBehaviour
                 yield break;
             }
 
-            // --- 2. Fish is on the line! ---
+            // --- 2. Fish on the line! ---
             Debug.Log("Fish on!");
             isFishOn = true;
             reactionTimer = 0f; // Reset reaction timer
@@ -145,7 +145,7 @@ public class Player : MonoBehaviour
                 Debug.Log("Fish got away! Too slow.");
                 // Loop restarts to wait for another fish
             }
-            
+
             // If the player reeled, 'isFishOn' will be false,
             // and the 'while' loop will restart, but Reel() will have
             // also set 'isCasting' to false, breaking the loop.
@@ -154,6 +154,12 @@ public class Player : MonoBehaviour
 
     public void Reel()
     {
+        // --- ADDED: Hide and reset the bobber ---
+        bobber.SetActive(false);
+        bobberRb.linearVelocity = Vector2.zero;
+        bobberRb.angularVelocity = 0f;
+        // ----------------------------------------
+
         Debug.Log("Reeling!");
         if (fishingCoroutine != null)
         {
@@ -218,9 +224,10 @@ public class Player : MonoBehaviour
         // Total money is the sum of all fish values
         float totalMoneyEarned = totalValueSum;
         // Points are Total / 2 (as per "Points: Caught/2" -> I'm assuming it means $Sum/2)
-        float totalPointsEarned = totalMoneyEarned / 2f;
+        float totalPointsEarned = hookLevel / 2f  + 0.5f;
 
         money += totalMoneyEarned;
+        debt -= totalMoneyEarned;
         points += (int)totalPointsEarned; // Add to total points
 
         Debug.Log($"Caught {hookLevel} {hookedFishPrefab.name}(s) for ${totalMoneyEarned}!");
