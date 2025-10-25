@@ -55,6 +55,7 @@ public class Player : MonoBehaviour
         fishCaughtPanel.gameObject.SetActive(false);
         canCast = true;
         bobberRb = bobber.GetComponent<Rigidbody2D>();
+        DontDestroyOnLoad(this);
     }
 
     void Update()

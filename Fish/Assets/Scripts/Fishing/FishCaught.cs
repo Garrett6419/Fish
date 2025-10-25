@@ -88,7 +88,7 @@ public class FishCaught : MonoBehaviour
             weightText.text = "Weight:\t" + currentWeight.ToString("F2");
             lengthText.text = "Length:\t" + currentLength.ToString("F2");
             caughtText.text = "Caught:\t*" + currentCaught.ToString();
-            totalText.text = "Sum:\t\t$" + currentTotal.ToString("F2");
+            totalText.text = "Sum:\t$" + currentTotal.ToString("F2");
             pointsText.text = "Points:\t" + currentPoints.ToString("F0"); // "F0" for no decimals
 
             yield return null; // Wait for the next frame
@@ -98,7 +98,7 @@ public class FishCaught : MonoBehaviour
         weightText.text = "Weight:\t" + targetWeight.ToString("F2");
         lengthText.text = "Length:\t" + targetLength.ToString("F2");
         caughtText.text = "Caught:\t*" + targetCaught.ToString();
-        totalText.text = "Sum:\t\t$" + targetTotal.ToString("F2");
+        totalText.text = "Sum:\t$" + targetTotal.ToString("F2");
         pointsText.text = "Points:\t" + targetPoints.ToString("F0");
     }
 
