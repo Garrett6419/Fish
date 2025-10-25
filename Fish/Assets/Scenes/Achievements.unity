@@ -205,6 +205,7 @@ GameObject:
   - component: {fileID: 299774084}
   - component: {fileID: 299774086}
   - component: {fileID: 299774085}
+  - component: {fileID: 299774087}
   m_Layer: 5
   m_Name: Trophy (11)
   m_TagString: Untagged
@@ -270,6 +271,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 299774083}
   m_CullTransparentMesh: 1
+--- !u!114 &299774087
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 299774083}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c3fc455039a5f148bc0a7c55a52f6fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tipToShow: Master Angler\n-----\nCatch 1000 Fish
 --- !u!1 &312306460
 GameObject:
   m_ObjectHideFlags: 0
@@ -281,6 +295,7 @@ GameObject:
   - component: {fileID: 312306461}
   - component: {fileID: 312306463}
   - component: {fileID: 312306462}
+  - component: {fileID: 312306464}
   m_Layer: 5
   m_Name: Trophy (8)
   m_TagString: Untagged
@@ -346,6 +361,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 312306460}
   m_CullTransparentMesh: 1
+--- !u!114 &312306464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 312306460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c3fc455039a5f148bc0a7c55a52f6fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tipToShow: Free At Last\n-----\nErase Your Debt From The Mafia
 --- !u!1 &320860149
 GameObject:
   m_ObjectHideFlags: 0
@@ -432,6 +460,7 @@ GameObject:
   - component: {fileID: 344801179}
   - component: {fileID: 344801181}
   - component: {fileID: 344801180}
+  - component: {fileID: 344801182}
   m_Layer: 5
   m_Name: Blackout12
   m_TagString: Untagged
@@ -496,6 +525,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 344801178}
   m_CullTransparentMesh: 1
+--- !u!114 &344801182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 344801178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c3fc455039a5f148bc0a7c55a52f6fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tipToShow: ???\n-----\nThis Achievement Is Hidden
 --- !u!1 &495454417
 GameObject:
   m_ObjectHideFlags: 0
@@ -718,6 +760,7 @@ GameObject:
   - component: {fileID: 523498487}
   - component: {fileID: 523498489}
   - component: {fileID: 523498488}
+  - component: {fileID: 523498490}
   m_Layer: 5
   m_Name: Trophy (6)
   m_TagString: Untagged
@@ -783,6 +826,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 523498486}
   m_CullTransparentMesh: 1
+--- !u!114 &523498490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 523498486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c3fc455039a5f148bc0a7c55a52f6fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tipToShow: Longer Fish\n-----\nCatch a Fish Longer Than 100 Feet
 --- !u!1 &554085753
 GameObject:
   m_ObjectHideFlags: 0
@@ -794,6 +850,7 @@ GameObject:
   - component: {fileID: 554085754}
   - component: {fileID: 554085756}
   - component: {fileID: 554085755}
+  - component: {fileID: 554085757}
   m_Layer: 5
   m_Name: Trophy (7)
   m_TagString: Untagged
@@ -859,6 +916,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 554085753}
   m_CullTransparentMesh: 1
+--- !u!114 &554085757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 554085753}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c3fc455039a5f148bc0a7c55a52f6fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tipToShow: Longest Fish\n-----\nCatch a Fish Longer Than 1000 Feet
 --- !u!1 &639576347
 GameObject:
   m_ObjectHideFlags: 0
@@ -870,6 +940,7 @@ GameObject:
   - component: {fileID: 639576348}
   - component: {fileID: 639576350}
   - component: {fileID: 639576349}
+  - component: {fileID: 639576351}
   m_Layer: 5
   m_Name: Trophy (3)
   m_TagString: Untagged
@@ -935,6 +1006,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 639576347}
   m_CullTransparentMesh: 1
+--- !u!114 &639576351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 639576347}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c3fc455039a5f148bc0a7c55a52f6fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tipToShow: Mega Fish\n-----\nCatch a Fish Heavier Than 1000 Pounds
 --- !u!1 &761219564
 GameObject:
   m_ObjectHideFlags: 0
@@ -1089,6 +1173,82 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &918950970
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 918950971}
+  - component: {fileID: 918950973}
+  - component: {fileID: 918950972}
+  m_Layer: 5
+  m_Name: TipWindow
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &918950971
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 918950970}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2033400621}
+  m_Father: {fileID: 1298126154}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 1887, y: -262}
+  m_SizeDelta: {x: 300, y: 200}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &918950972
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 918950970}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.8862745}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &918950973
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 918950970}
+  m_CullTransparentMesh: 1
 --- !u!1 &1093210876
 GameObject:
   m_ObjectHideFlags: 0
@@ -1175,6 +1335,7 @@ GameObject:
   - component: {fileID: 1104373349}
   - component: {fileID: 1104373351}
   - component: {fileID: 1104373350}
+  - component: {fileID: 1104373352}
   m_Layer: 5
   m_Name: Trophy (2)
   m_TagString: Untagged
@@ -1240,6 +1401,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1104373348}
   m_CullTransparentMesh: 1
+--- !u!114 &1104373352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1104373348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c3fc455039a5f148bc0a7c55a52f6fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tipToShow: Huge Fish\n-----\nCatch a Fish Heavier Than 100 Pounds
 --- !u!1 &1235647440
 GameObject:
   m_ObjectHideFlags: 0
@@ -1374,7 +1548,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!223 &1298126153
 Canvas:
   m_ObjectHideFlags: 0
@@ -1384,7 +1558,7 @@ Canvas:
   m_GameObject: {fileID: 1298126150}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 2
+  m_RenderMode: 0
   m_Camera: {fileID: 0}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
@@ -1407,21 +1581,20 @@ RectTransform:
   m_GameObject: {fileID: 1298126150}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.009527181, y: 0.011130745, z: 0.009527181}
+  m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2069932266}
   - {fileID: 1478105769}
   - {fileID: 2016697671}
-  - {fileID: 1587237647}
-  - {fileID: 2033400621}
+  - {fileID: 918950971}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0.03, y: -0.17}
-  m_SizeDelta: {x: 1920, y: 1079.603}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0, y: 0}
 --- !u!114 &1298126155
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1435,7 +1608,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tipText: {fileID: 2033400622}
-  tipWindow: {fileID: 1587237647}
+  tipWindow: {fileID: 918950971}
 --- !u!1 &1478105768
 GameObject:
   m_ObjectHideFlags: 0
@@ -1483,81 +1656,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &1587237646
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1587237647}
-  - component: {fileID: 1587237649}
-  - component: {fileID: 1587237648}
-  m_Layer: 5
-  m_Name: ToolTipBox1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1587237647
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1587237646}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.24491207, y: 0.2376985, z: 0.82322}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1298126154}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -496, y: -377}
-  m_SizeDelta: {x: 1921, y: 849}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1587237648
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1587237646}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.8392157}
-  m_RaycastTarget: 0
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &1587237649
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1587237646}
-  m_CullTransparentMesh: 1
 --- !u!1 &1631228412
 GameObject:
   m_ObjectHideFlags: 0
@@ -1569,6 +1667,7 @@ GameObject:
   - component: {fileID: 1631228413}
   - component: {fileID: 1631228415}
   - component: {fileID: 1631228414}
+  - component: {fileID: 1631228416}
   m_Layer: 5
   m_Name: Trophy (5)
   m_TagString: Untagged
@@ -1634,6 +1733,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1631228412}
   m_CullTransparentMesh: 1
+--- !u!114 &1631228416
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1631228412}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c3fc455039a5f148bc0a7c55a52f6fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tipToShow: Long Fish\n-----\nCatch a Fish Longer Than 10 Feet
 --- !u!1 &1659910527
 GameObject:
   m_ObjectHideFlags: 0
@@ -1857,6 +1969,7 @@ GameObject:
   - component: {fileID: 1744224857}
   - component: {fileID: 1744224859}
   - component: {fileID: 1744224858}
+  - component: {fileID: 1744224860}
   m_Layer: 5
   m_Name: Trophy (9)
   m_TagString: Untagged
@@ -1922,6 +2035,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1744224856}
   m_CullTransparentMesh: 1
+--- !u!114 &1744224860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1744224856}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c3fc455039a5f148bc0a7c55a52f6fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tipToShow: Novice Baiter\n-----\nCatch 10 Fish
 --- !u!1 &1791981663
 GameObject:
   m_ObjectHideFlags: 0
@@ -1933,6 +2059,7 @@ GameObject:
   - component: {fileID: 1791981664}
   - component: {fileID: 1791981666}
   - component: {fileID: 1791981665}
+  - component: {fileID: 1791981667}
   m_Layer: 5
   m_Name: Trophy (12)
   m_TagString: Untagged
@@ -1998,6 +2125,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1791981663}
   m_CullTransparentMesh: 1
+--- !u!114 &1791981667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1791981663}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c3fc455039a5f148bc0a7c55a52f6fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tipToShow: You Can't Buy That!\n-----\nTry And Buy The Hat In The Shop
 --- !u!1 &1817357517
 GameObject:
   m_ObjectHideFlags: 0
@@ -2237,7 +2377,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c3fc455039a5f148bc0a7c55a52f6fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tipToShow: Big Fish\n\nCatch a Fish heavier Than 10 Pounds
+  tipToShow: Big Fish\n-----\nCatch a Fish Heavier Than 10 Pounds
 --- !u!1 &1975748440
 GameObject:
   m_ObjectHideFlags: 0
@@ -2484,7 +2624,7 @@ GameObject:
   - component: {fileID: 2033400623}
   - component: {fileID: 2033400622}
   m_Layer: 5
-  m_Name: TooltipText1
+  m_Name: TooltipText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2499,14 +2639,14 @@ RectTransform:
   m_GameObject: {fileID: 2033400620}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.2412004, y: 2.2412004, z: 4.4824004}
+  m_LocalScale: {x: 1.5756911, y: 1.8110709, z: 4.4824004}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1298126154}
+  m_Father: {fileID: 918950971}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -504.8777, y: -331.0053}
+  m_AnchoredPosition: {x: 168, y: -56}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2033400622
@@ -2530,6 +2670,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: 'Big Fish
+
+    ---------
 
     Catch a fish heavier than 10 lbs
 
@@ -2566,7 +2708,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
   m_textAlignment: 65535
@@ -2598,7 +2740,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: -3.8024445, w: -64.64192}
+  m_margin: {x: 0, y: 0, z: 9.583664, w: -64.64192}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -2623,6 +2765,7 @@ GameObject:
   - component: {fileID: 2047823532}
   - component: {fileID: 2047823534}
   - component: {fileID: 2047823533}
+  - component: {fileID: 2047823535}
   m_Layer: 5
   m_Name: Trophy (4)
   m_TagString: Untagged
@@ -2688,6 +2831,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2047823531}
   m_CullTransparentMesh: 1
+--- !u!114 &2047823535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2047823531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c3fc455039a5f148bc0a7c55a52f6fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tipToShow: Fish Collector\n-----\nCatch Every Type Of Fish
 --- !u!1 &2049158746
 GameObject:
   m_ObjectHideFlags: 0
@@ -2814,7 +2970,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -2849,6 +3005,7 @@ GameObject:
   - component: {fileID: 2102279321}
   - component: {fileID: 2102279323}
   - component: {fileID: 2102279322}
+  - component: {fileID: 2102279324}
   m_Layer: 5
   m_Name: Trophy (10)
   m_TagString: Untagged
@@ -2914,6 +3071,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2102279320}
   m_CullTransparentMesh: 1
+--- !u!114 &2102279324
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2102279320}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c3fc455039a5f148bc0a7c55a52f6fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tipToShow: Apprentice Baiter\n-----\nCatch 100 Fish
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
