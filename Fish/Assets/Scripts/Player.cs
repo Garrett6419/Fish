@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using TMPro; // For TextMeshPro
 using UnityEngine.SceneManagement; // For scene management
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// This is the main player controller script.
@@ -14,6 +15,9 @@ public class Player : MonoBehaviour
 
     // --- Singleton Instance ---
     public static Player instance;
+
+    private bool inputDisabled = false;
+    private bool inFishingScene = false;
 
     [Header("Player Stats")]
     public float weightMult = 1;
@@ -30,9 +34,9 @@ public class Player : MonoBehaviour
     [Header("Casting")]
     [SerializeField] private int lowCast = 100;
     [SerializeField] private int highCast = 200;
-    private Rigidbody2D bobberRb;
-    private GameObject bobber;
-    private Transform bobberDefault;
+    [SerializeField] private Rigidbody2D bobberRb;
+    [SerializeField] private GameObject bobber;
+    [SerializeField] private Transform bobberDefault;
 
     // --- Fishing Loop Fields ---
     // These are linked at runtime by RelinkReferences()
@@ -60,18 +64,18 @@ public class Player : MonoBehaviour
 
     // --- Stats Tracking Fields ---
     [Header("Overall Fish Stats")]
-    private int numAllCaught = 0;
-    private float heaviestAllCaught = 0;
-    private float lightestAllCaught = float.MaxValue;
-    private float longestAllCaught = 0;
-    private float shortestAllCaught = float.MaxValue;
+    public int numAllCaught = 0;
+    public float heaviestAllCaught = 0;
+    public float lightestAllCaught = float.MaxValue;
+    public float longestAllCaught = 0;
+    public float shortestAllCaught = float.MaxValue;
 
     [Header("Per-Fish-Type Stats")]
-    private int[] numCaught;
-    private float[] heaviestCaught;
-    private float[] lightestCaught;
-    private float[] longestCaught;
-    private float[] shortestCaught;
+    public int[] numCaught;
+    public float[] heaviestCaught;
+    public float[] lightestCaught;
+    public float[] longestCaught;
+    public float[] shortestCaught;
 
     [Header("Daily Stats")]
     private int fishCaughtToday = 0;
@@ -113,12 +117,30 @@ public class Player : MonoBehaviour
     /// </summary>
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // *** IMPORTANT: Change "BeachScene" to your exact scene name ***
-        if (scene.name == "BeachScene")
+        // --- THIS IS THE CRITICAL FIX ---
+        // Change "BeachScene" to "Beach"
+        if (scene.name == "Beach")
         {
             Debug.Log("Beach scene loaded, re-linking references...");
             RelinkReferences();
+            inFishingScene = true;
+
+            // This will now run correctly and solve the accidental cast
+            inputDisabled = true;
+            StartCoroutine(EnableInputCooldown());
         }
+        else
+        {
+            inFishingScene = false;
+        }
+    }
+
+    private IEnumerator EnableInputCooldown()
+    {
+        // Wait for a very short time
+        yield return new WaitForSeconds(0.1f);
+        inputDisabled = false;
+        Debug.Log("Input enabled.");
     }
 
     /// <summary>
@@ -135,11 +157,6 @@ public class Player : MonoBehaviour
             fishCaughtPanel = refs.caughtPanel;
             fishAlertUI = refs.alertUI;
             dayTimeDebt = refs.debtText;
-            bobber = refs.bobberObject;
-            bobberDefault = refs.bobberStartPos;
-
-            if (bobber != null)
-                bobberRb = bobber.GetComponent<Rigidbody2D>();
 
             // Hide UI elements and set initial state
             if (fishAlertUI != null) fishAlertUI.SetActive(false);
@@ -169,7 +186,7 @@ public class Player : MonoBehaviour
         else
         {
             // Only log an error if we are in the main scene
-            if (SceneManager.GetActiveScene().name == "BeachScene")
+            if (SceneManager.GetActiveScene().name == "Beach")
             {
                 Debug.LogError("Could not find 'SceneReferences' object in the Beach scene!");
             }
@@ -194,33 +211,27 @@ public class Player : MonoBehaviour
     void Update()
     {
         // 1. Check for UI / Paused State
-        // If catch panel is open, pause time and stop all input
         if (fishCaughtPanel != null && fishCaughtPanel.gameObject.activeInHierarchy)
         {
             return;
         }
 
-        // 2. Advance Time
-        // Only advance time if we are not casting and the alert isn't up
-        if (!isCasting && !isFishOn)
+        if(!inFishingScene)
         {
-            gameTimeInMinutes += Time.deltaTime * timeScale;
+            return;
         }
 
-        // Check for end of day
+        gameTimeInMinutes += Time.deltaTime * timeScale;
+
         if (gameTimeInMinutes >= dayEndMinutes)
         {
             EndDay();
-            return; // Stop update loop
+            return;
         }
-
-        // Update UI clock (only if it's linked)
         if (dayTimeDebt != null)
             UpdateDayTimeDebtUI();
 
         // 3. Check for Scene Change Input
-        // Right-click to go to shop (only if not casting)
-        // *** IMPORTANT: Change "ShopScene" to your exact scene name ***
         if (Input.GetMouseButtonDown(1) && !isCasting)
         {
             SceneManager.LoadScene("Shop");
@@ -228,13 +239,12 @@ public class Player : MonoBehaviour
         }
 
         // 4. Check for Fishing Input
-        // Left-click to Cast
-        if (canCast && !isCasting && Input.GetMouseButtonDown(0))
+        // This check will now only pass if the click was NOT on a UI element
+        if (canCast && !isCasting && !inputDisabled && Input.GetMouseButtonDown(0))
         {
             Cast();
         }
-        // Left-click to Reel
-        else if (isFishOn && Input.GetMouseButtonDown(0))
+        else if (isFishOn && !inputDisabled && Input.GetMouseButtonDown(0))
         {
             Reel();
         }
@@ -248,9 +258,9 @@ public class Player : MonoBehaviour
 
     #endregion
 
-    // -------------------------------------------------------------------
+        // -------------------------------------------------------------------
 
-    #region Fishing Core Loop
+        #region Fishing Core Loop
 
     public void Cast()
     {
@@ -431,6 +441,7 @@ public class Player : MonoBehaviour
         day++;
         gameTimeInMinutes = dayStartMinutes;
         fishCaughtToday = 0; // Reset daily fish count
+        canCast = true;
 
         Debug.Log($"Day {day} has begun!");
 
@@ -438,7 +449,7 @@ public class Player : MonoBehaviour
         // debt *= 1.1f; 
 
         // *** IMPORTANT: Change "BeachScene" to your exact scene name ***
-        SceneManager.LoadScene("BeachScene");
+        SceneManager.LoadScene("Beach");
     }
 
     /// <summary>

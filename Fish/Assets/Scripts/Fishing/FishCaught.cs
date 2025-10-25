@@ -62,6 +62,10 @@ public class FishCaught : MonoBehaviour
         {
             TakeDown();
         }
+        if(player == null)
+        {
+            player = FindAnyObjectByType<Player>();
+        }
     }
 
     // This coroutine creates the "count up" effect

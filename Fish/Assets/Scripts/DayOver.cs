@@ -5,13 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class DayOver : MonoBehaviour
 {
-    [Header("Text Fields")]
-    [SerializeField] private TextMeshProUGUI line1_DayComplete;
-    [SerializeField] private TextMeshProUGUI line2_FishCaughtLabel;
-    [SerializeField] private TextMeshProUGUI line3_FishCaughtValue;
-    [SerializeField] private TextMeshProUGUI line4_DebtLabel;
-    [SerializeField] private TextMeshProUGUI line5_DebtValue;
-    [SerializeField] private TextMeshProUGUI line6_ContinuePrompt;
+    [Header("UI")]
+    [SerializeField] private TextMeshProUGUI summaryText; // The single text object
 
     [Header("Animation")]
     [SerializeField] private float lineDelay = 0.5f;
@@ -21,19 +16,16 @@ public class DayOver : MonoBehaviour
 
     void Start()
     {
-        // Clear all text fields
-        line1_DayComplete.text = "";
-        line2_FishCaughtLabel.text = "";
-        line3_FishCaughtValue.text = "";
-        line4_DebtLabel.text = "";
-        line5_DebtValue.text = "";
-        line6_ContinuePrompt.text = "";
+        // Clear all text
+        summaryText.text = "";
 
         // Find the Player and get the stats
         Player player = Player.instance;
         if (player == null)
         {
             Debug.LogError("DayOver scene can't find Player! Aborting.");
+            // You might want to add a failsafe here, like loading the Beach scene
+            // SceneManager.LoadScene("Beach");
             return;
         }
 
@@ -58,70 +50,75 @@ public class DayOver : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Animates the summary text line-by-line, including number tickers.
+    /// </summary>
     private IEnumerator AnimateSummary(int day, int fishCaught, float debt)
     {
-        // Line 1
-        line1_DayComplete.text = $"Day {day} Complete";
-        yield return new WaitForSeconds(lineDelay);
+        // --- Build Static String Parts ---
+        string line1 = $"Day {day} Complete\n\n";
+        string line2 = "Fish Caught Today:\n";
+        string line4 = "\n\nTotal Debt Remaining:\n";
+        string line6 = "\n\nPress To Continue";
 
-        // Line 2
-        line2_FishCaughtLabel.text = "Fish Caught Today:";
-        yield return new WaitForSeconds(lineDelay * 0.5f);
-
-        // Line 3 (Number Ticker)
-        StartCoroutine(AnimateNumber(line3_FishCaughtValue, fishCaught, false));
-        yield return new WaitForSeconds(numberAnimationTime); // Wait for ticker
-
-        // Line 4
-        line4_DebtLabel.text = "Total Debt Remaining:";
-        yield return new WaitForSeconds(lineDelay * 0.5f);
-
-        // Line 5 (Number Ticker)
-        StartCoroutine(AnimateNumber(line5_DebtValue, debt, true));
-        yield return new WaitForSeconds(numberAnimationTime); // Wait for ticker
-
-        // Line 6
-        line6_ContinuePrompt.text = "Press To Continue";
-
-        // Animation is done, allow the player to continue
-        canContinue = true;
-    }
-
-    // This is the number ticker logic, like from FishCaught.cs
-    private IEnumerator AnimateNumber(TextMeshProUGUI textField, float targetValue, bool isCurrency)
-    {
         float elapsedTime = 0f;
 
+        // --- Animate Line 1 ---
+        summaryText.text = line1;
+        yield return new WaitForSeconds(lineDelay);
+
+        // --- Animate Line 2 ---
+        summaryText.text += line2;
+        yield return new WaitForSeconds(lineDelay * 0.5f);
+
+        // --- Animate Line 3 (Fish Ticker) ---
+        elapsedTime = 0f;
         while (elapsedTime < numberAnimationTime)
         {
             elapsedTime += Time.deltaTime;
             float t = elapsedTime / numberAnimationTime;
             t = Mathf.Sin(t * Mathf.PI * 0.5f); // Ease-out
 
-            float currentValue = Mathf.Lerp(0, targetValue, t);
+            float currentValue = Mathf.Lerp(0, fishCaught, t);
 
-            if (isCurrency)
-            {
-                // Format as currency, e.g., $12345.67
-                textField.text = "$" + currentValue.ToString("F2");
-            }
-            else
-            {
-                // Format as a whole number, e.g., 12
-                textField.text = currentValue.ToString("F0");
-            }
-
-            yield return null; // Wait for the next frame
+            // Rebuild the text string every frame
+            summaryText.text = line1 + line2 + currentValue.ToString("F0");
+            yield return null; // Wait for next frame
         }
 
-        // After the loop, set the final, exact value
-        if (isCurrency)
+        // Set final value for fish
+        summaryText.text = line1 + line2 + fishCaught.ToString("F0");
+        yield return new WaitForSeconds(lineDelay);
+
+        // --- Animate Line 4 ---
+        summaryText.text += line4;
+        yield return new WaitForSeconds(lineDelay * 0.5f);
+
+        // --- Animate Line 5 (Debt Ticker) ---
+        elapsedTime = 0f; // Reset timer
+        while (elapsedTime < numberAnimationTime)
         {
-            textField.text = "$" + targetValue.ToString("F2");
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / numberAnimationTime;
+            t = Mathf.Sin(t * Mathf.PI * 0.5f); // Ease-out
+
+            float currentValue = Mathf.Lerp(0, debt, t);
+
+            // Rebuild text every frame, including the previous lines
+            summaryText.text = line1 + line2 + fishCaught.ToString("F0") +
+                               line4 + "$" + currentValue.ToString("F2");
+            yield return null; // Wait for next frame
         }
-        else
-        {
-            textField.text = targetValue.ToString("F0");
-        }
+
+        // Set final value for debt
+        summaryText.text = line1 + line2 + fishCaught.ToString("F0") +
+                           line4 + "$" + debt.ToString("F2");
+        yield return new WaitForSeconds(lineDelay);
+
+        // --- Animate Line 6 ---
+        summaryText.text += line6;
+
+        // Animation is done, allow the player to continue
+        canContinue = true;
     }
 }

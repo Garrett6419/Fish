@@ -11,6 +11,18 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Shop.unity
     guid: 2a754f3915292134398eafd3c37276cc
+  - enabled: 1
+    path: Assets/Scenes/Achievements.unity
+    guid: 558035c8c3885964484a375a7dd22342
+  - enabled: 1
+    path: Assets/Scenes/DayOver.unity
+    guid: dca3d2f0451b02f4db051f75a04ead59
+  - enabled: 1
+    path: Assets/Scenes/Dialogue/IntroDialogue.unity
+    guid: 4f3051bdd83a8524fbbc4d2a51b64bb8
+  - enabled: 1
+    path: Assets/Scenes/Start.unity
+    guid: 63dce6bb21b33c040832eb423eacfc59
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
