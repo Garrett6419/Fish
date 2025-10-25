@@ -1106,6 +1106,7 @@ GameObject:
   - component: {fileID: 1085526768}
   - component: {fileID: 1085526767}
   - component: {fileID: 1085526766}
+  - component: {fileID: 1085526769}
   m_Layer: 5
   m_Name: WeightButton
   m_TagString: Untagged
@@ -1176,7 +1177,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1085526767}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1085526769}
+        m_TargetAssemblyTypeName: ShopScript, Assembly-CSharp
+        m_MethodName: UpgradeWeight
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1085526767
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1215,6 +1228,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1085526764}
   m_CullTransparentMesh: 1
+--- !u!114 &1085526769
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085526764}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36693be5faba5b74a8fd119284b555c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MainPlayer: {fileID: 0}
+  Mult: 1.5
 --- !u!1 &1378241414
 GameObject:
   m_ObjectHideFlags: 0
@@ -1515,6 +1542,7 @@ GameObject:
   - component: {fileID: 1633435491}
   - component: {fileID: 1633435490}
   - component: {fileID: 1633435489}
+  - component: {fileID: 1633435492}
   m_Layer: 5
   m_Name: ExitButton
   m_TagString: Untagged
@@ -1585,7 +1613,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1633435490}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1633435492}
+        m_TargetAssemblyTypeName: ShopScript, Assembly-CSharp
+        m_MethodName: OnExit
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1633435490
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1624,6 +1664,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1633435487}
   m_CullTransparentMesh: 1
+--- !u!114 &1633435492
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1633435487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36693be5faba5b74a8fd119284b555c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MainPlayer: {fileID: 0}
+  Mult: 1.5
 --- !u!1 &1745974184
 GameObject:
   m_ObjectHideFlags: 0
@@ -1636,6 +1690,7 @@ GameObject:
   - component: {fileID: 1745974188}
   - component: {fileID: 1745974187}
   - component: {fileID: 1745974186}
+  - component: {fileID: 1745974189}
   m_Layer: 5
   m_Name: HookButton
   m_TagString: Untagged
@@ -1706,7 +1761,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1745974187}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1745974189}
+        m_TargetAssemblyTypeName: ShopScript, Assembly-CSharp
+        m_MethodName: UpgradeHooks
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1745974187
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1745,6 +1812,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1745974184}
   m_CullTransparentMesh: 1
+--- !u!114 &1745974189
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1745974184}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36693be5faba5b74a8fd119284b555c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MainPlayer: {fileID: 0}
+  Mult: 1.5
 --- !u!1 &1830907475
 GameObject:
   m_ObjectHideFlags: 0
@@ -1757,6 +1838,7 @@ GameObject:
   - component: {fileID: 1830907479}
   - component: {fileID: 1830907478}
   - component: {fileID: 1830907477}
+  - component: {fileID: 1830907480}
   m_Layer: 5
   m_Name: LengthButton
   m_TagString: Untagged
@@ -1827,7 +1909,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1830907478}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1830907480}
+        m_TargetAssemblyTypeName: ShopScript, Assembly-CSharp
+        m_MethodName: UpgradeLength
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1830907478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1866,6 +1960,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1830907475}
   m_CullTransparentMesh: 1
+--- !u!114 &1830907480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1830907475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36693be5faba5b74a8fd119284b555c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MainPlayer: {fileID: 0}
+  Mult: 1.5
 --- !u!1 &1937679201
 GameObject:
   m_ObjectHideFlags: 0
