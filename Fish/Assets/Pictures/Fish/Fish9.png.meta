@@ -5,9 +5,6 @@ TextureImporter:
   - first:
       213: -8227713730427404582
     second: Fish9_0
-  - first:
-      213: 51642603663057247
-    second: Fish9_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -119,30 +116,8 @@ TextureImporter:
       name: Fish9_0
       rect:
         serializedVersion: 2
-        x: 422
-        y: 381
-        width: 35
-        height: 31
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: ade354854f941dd80800000000000000
-      internalID: -8227713730427404582
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Fish9_1
-      rect:
-        serializedVersion: 2
-        x: 11
-        y: 165
+        x: 14
+        y: 167
         width: 458
         height: 162
       alignment: 0
@@ -153,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: f51ec96aca877b000800000000000000
-      internalID: 51642603663057247
+      spriteID: ade354854f941dd80800000000000000
+      internalID: -8227713730427404582
       vertices: []
       indices: 
       edges: []
@@ -174,7 +149,6 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       Fish9_0: -8227713730427404582
-      Fish9_1: 51642603663057247
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

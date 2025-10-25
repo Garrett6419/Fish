@@ -1,13 +1,10 @@
 fileFormatVersion: 2
-guid: 4c1e85fcf5c49a141b439a89cc55c792
+guid: d817729c80a49654ba5a4c69964a013e
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 739341241757215960
-    second: Fish4_0
-  - first:
-      213: -3223074428061625583
-    second: Fish4_1
+      213: -4193530080845982786
+    second: TinCan_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -116,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Fish4_0
+      name: TinCan_0
       rect:
         serializedVersion: 2
-        x: 2
-        y: 168
-        width: 431
-        height: 142
+        x: 128
+        y: 21
+        width: 207
+        height: 395
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -131,30 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 8dc2cb231faa24a00800000000000000
-      internalID: 739341241757215960
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Fish4_1
-      rect:
-        serializedVersion: 2
-        x: 211
-        y: 125
-        width: 7
-        height: 8
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 113ddbe52e65543d0800000000000000
-      internalID: -3223074428061625583
+      spriteID: eb392481c969dc5c0800000000000000
+      internalID: -4193530080845982786
       vertices: []
       indices: 
       edges: []
@@ -173,8 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Fish4_0: 739341241757215960
-      Fish4_1: -3223074428061625583
+      TinCan_0: -4193530080845982786
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

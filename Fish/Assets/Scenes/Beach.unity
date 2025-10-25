@@ -2148,6 +2148,56 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &921127781
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 921127783}
+  - component: {fileID: 921127782}
+  m_Layer: 0
+  m_Name: SceneReference
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &921127782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 921127781}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7d9b2521f414354d96e241bc40e6c94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawner: {fileID: 1605838299}
+  caughtPanel: {fileID: 67101061}
+  alertUI: {fileID: 961574995}
+  bobberObject: {fileID: 1155587133}
+  bobberStartPos: {fileID: 1745856042}
+  debtText: {fileID: 1129268606}
+--- !u!4 &921127783
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 921127781}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 579.17804, y: 310.34058, z: -4.069659}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &961574995
 GameObject:
   m_ObjectHideFlags: 0
@@ -2803,15 +2853,8 @@ MonoBehaviour:
   points: 0
   money: 0
   debt: 1000000
-  bobberRb: {fileID: 1155587136}
-  bobber: {fileID: 1155587133}
-  bobberDefault: {fileID: 1745856042}
   lowCast: 100
   highCast: 150
-  fishSpawner: {fileID: 1605838299}
-  fishCaughtPanel: {fileID: 67101061}
-  fishAlertUI: {fileID: 961574995}
-  dayTimeDebt: {fileID: 1129268606}
   day: 0
   timeScale: 10
 --- !u!4 &1353796855
@@ -3692,3 +3735,4 @@ SceneRoots:
   - {fileID: 67101062}
   - {fileID: 1235185507}
   - {fileID: 120895458}
+  - {fileID: 921127783}
