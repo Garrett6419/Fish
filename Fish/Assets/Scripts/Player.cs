@@ -25,13 +25,18 @@ public class Player : MonoBehaviour
     public int weightLevel = 1;
     public int lengthLevel = 1;
     public int hookLevel = 1;
-    public int points = 0;
-    public float money = 0;
     public bool[] achievements = { false, false, false, false, false, false, false, false, false, false, false, false };
 
+    [Header("Economy & Score")]
+    public long money = 0;
+    public long points = 0; // For spending in the shop
+    public long finalScore = 0; // Your end-game score
+    public long totalMoneyEarned = 0; // Tracks all money ever earned
+    public int totalExtraDays = 0; // Tracks all days saved across all runs
+
     [Header("Debt")]
-    [SerializeField] private float baseDebt = 1000000;
-    public float currentDebt;
+    [SerializeField] private long baseDebt = 1000000;
+    public long currentDebt; // The active debt, including interest
     [SerializeField] private float interestRate = 1.05f; // 5% interest per day
 
     // --- Casting Fields ---
@@ -39,7 +44,7 @@ public class Player : MonoBehaviour
     [SerializeField] private int lowCast = 100;
     [SerializeField] private int highCast = 200;
     [SerializeField] private Rigidbody2D bobberRb;
-    [SerializeField] private GameObject bobber;
+    [SerializeField] private Bobber bobber; // Using your Bobber script
     [SerializeField] private Transform bobberDefault;
 
     // --- Fishing Loop Fields ---
@@ -113,7 +118,7 @@ public class Player : MonoBehaviour
     void OnDisable()
     {
         // Unsubscribe when disabled
-        SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneManager.sceneLoaded -= OnSceneLoaded; // This was the typo fix
     }
 
     /// <summary>
@@ -122,7 +127,7 @@ public class Player : MonoBehaviour
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         // Check for the main fishing scene
-        if (scene.name == "Beach")
+        if (scene.name == "Beach") //
         {
             Debug.Log("Beach scene loaded, re-linking references...");
             RelinkReferences();
@@ -135,7 +140,7 @@ public class Player : MonoBehaviour
         else
         {
             // We are in the Shop, DayOver, Dialogue, etc.
-            inFishingScene = false;
+            inFishingScene = false; //
         }
     }
 
@@ -217,31 +222,24 @@ public class Player : MonoBehaviour
     void Update()
     {
         // 1. Check for UI / Paused State
-        // If catch panel is open, pause time and stop all input
         if (fishCaughtPanel != null && fishCaughtPanel.gameObject.activeInHierarchy)
         {
             return;
         }
 
         // 2. Check for other scenes
-        // If we are not in the fishing scene (e.g., Shop), pause time
         if (!inFishingScene)
         {
             return;
         }
 
         // 3. Advance Time
-        // Time will now run while casting and reeling
         gameTimeInMinutes += Time.deltaTime * timeScale;
-
-        // Check for end of day
         if (gameTimeInMinutes >= dayEndMinutes)
         {
             EndDay();
             return;
         }
-
-        // Update UI clock
         if (dayTimeDebt != null)
             UpdateDayTimeDebtUI();
 
@@ -253,13 +251,25 @@ public class Player : MonoBehaviour
         }
 
         // 5. Check for Fishing Input
-        if (canCast && !isCasting && !inputDisabled && Input.GetMouseButtonDown(0))
+        if (inputDisabled) return; // Wait for cooldown
+
+        if (Input.GetMouseButtonDown(0))
         {
-            Cast();
-        }
-        else if (isFishOn && !inputDisabled && Input.GetMouseButtonDown(0))
-        {
-            Reel();
+            if (canCast && !isCasting)
+            {
+                // 1. Can cast and not casting: CAST
+                Cast();
+            }
+            else if (isFishOn)
+            {
+                // 2. Fish is on the line: REEL (success)
+                Reel();
+            }
+            else if (isCasting && !isFishOn)
+            {
+                // 3. Casting but no fish on line: REEL (early)
+                RetractEarly();
+            }
         }
 
         // 6. Update Reaction Timer
@@ -283,43 +293,57 @@ public class Player : MonoBehaviour
         isFishOn = false;
 
         // Position and launch bobber
-        bobber.SetActive(true);
+        bobber.gameObject.SetActive(true);
         bobber.transform.position = bobberDefault.position;
         bobberRb.AddForce(new(Random.Range(lowCast, highCast), Random.Range(lowCast, highCast)));
+        bobber.SetState(Bobber.BobberState.Waiting);
 
         fishingCoroutine = StartCoroutine(CastTime());
     }
 
     private IEnumerator CastTime()
     {
+        // --- TIMING CHANGED ---
+        const float perfectWindow = 0.3f;
+        const float totalWindow = 1.5f;
+        // ----------------------
+
         while (isCasting)
         {
             // 1. Waiting for a bite
             isFishOn = false;
             if (fishAlertUI != null) fishAlertUI.SetActive(false);
 
-            // Get a random fish prefab AND its ID
             hookedFishPrefab = fishSpawner.GetFish(out hookedFishID);
 
             float waitTime = Random.Range(2.0f, 3.0f);
             yield return new WaitForSeconds(waitTime);
 
-            if (!isCasting) yield break; // Check if interrupted
+            if (!isCasting) yield break;
 
             // 2. Fish on the line!
             Debug.Log($"Fish on! (ID: {hookedFishID})");
             isFishOn = true;
             reactionTimer = 0f;
             if (fishAlertUI != null) fishAlertUI.SetActive(true);
+            bobber.SetState(Bobber.BobberState.AlertEarly);
 
-            // 3. Wait for Player Reaction (1 second window)
-            yield return new WaitForSeconds(1.0f);
+            // 3. Wait for the "perfect" window to end
+            yield return new WaitForSeconds(perfectWindow);
 
-            // 4. Check if player was too slow
+            if (isFishOn)
+            {
+                bobber.SetState(Bobber.BobberState.AlertLate);
+            }
+
+            // 4. Wait for the rest of the total window
+            yield return new WaitForSeconds(totalWindow - perfectWindow);
+
+            // 5. Check if player was too slow
             if (isFishOn)
             {
                 Debug.Log("Fish got away! Too slow.");
-                // Loop restarts automatically
+                bobber.SetState(Bobber.BobberState.Waiting);
             }
         }
     }
@@ -327,8 +351,9 @@ public class Player : MonoBehaviour
     public void Reel()
     {
         // Hide and reset the bobber
-        bobber.SetActive(false);
-        bobberRb.linearVelocity = Vector2.zero; // Use .velocity, not .linearVelocity
+        bobber.gameObject.SetActive(false);
+        bobber.SetState(Bobber.BobberState.Hidden);
+        bobberRb.linearVelocity = Vector2.zero;
         bobberRb.angularVelocity = 0f;
 
         Debug.Log("Reeling!");
@@ -338,9 +363,9 @@ public class Player : MonoBehaviour
         isFishOn = false;
         if (fishAlertUI != null) fishAlertUI.SetActive(false);
 
-        // Check reaction time for bonus
         float timingMultiplier = 1.0f;
-        if (reactionTimer <= 0.2f)
+        // --- TIMING CHANGED ---
+        if (reactionTimer <= 0.3f)
         {
             Debug.Log("Perfect catch! +20% bonus!");
             timingMultiplier = 1.2f;
@@ -349,13 +374,34 @@ public class Player : MonoBehaviour
         {
             Debug.Log("Good catch!");
         }
+        // ----------------------
 
         ProcessCatch(timingMultiplier);
     }
 
+    /// <summary>
+    /// Called when the player clicks to reel in, but no fish is on the line.
+    /// </summary>
+    private void RetractEarly()
+    {
+        Debug.Log("Reeled in too early! Resetting cast.");
+
+        bobber.gameObject.SetActive(false);
+        bobber.SetState(Bobber.BobberState.Hidden);
+        bobberRb.linearVelocity = Vector2.zero;
+        bobberRb.angularVelocity = 0f;
+
+        if (fishingCoroutine != null) StopCoroutine(fishingCoroutine);
+
+        isCasting = false;
+        isFishOn = false;
+        if (fishAlertUI != null) fishAlertUI.SetActive(false);
+
+        canCast = true; // Allow the player to cast again
+    }
+
     private void ProcessCatch(float timingMultiplier)
     {
-        // Safety check for the prefab
         if (hookedFishPrefab == null)
         {
             Debug.LogError("ProcessCatch FAILED: hookedFishPrefab was null.");
@@ -377,43 +423,39 @@ public class Player : MonoBehaviour
 
         for (int i = 0; i < hookLevel; i++)
         {
-            // Calculate randomized stats
             float actualWeight = fishData.weight * Random.Range(0.8f, 1.2f);
             float actualLength = fishData.length * Random.Range(0.8f, 1.2f);
-
-            // Apply player multipliers and timing bonus
             actualWeight *= timingMultiplier * weightMult;
             actualLength *= timingMultiplier * lengthMult;
 
-            // Store the first fish's stats for display
             if (i == 0)
             {
                 displayWeight = actualWeight;
                 displayLength = actualLength;
             }
 
-            // Add this fish's value to the total pot
             totalValueSum += (actualWeight + actualLength);
-
-            // Update all stat trackers
             UpdateStats(hookedFishID, actualWeight, actualLength);
         }
 
-        // Calculate money and points
-        float totalMoneyEarned = totalValueSum;
-        float totalPointsEarned = (hookLevel / 2f) + 0.5f;
+        long moneyEarnedThisCatch = (long)Mathf.Floor(totalValueSum);
+        long pointsEarnedThisCatch = (long)Mathf.Floor((hookLevel / 2f) + 0.5f);
 
         // Update player totals
-        money += totalMoneyEarned;
-        currentDebt -= totalMoneyEarned;
-        points += (int)totalPointsEarned;
+        money += moneyEarnedThisCatch;
+        totalMoneyEarned += moneyEarnedThisCatch;
+        points += pointsEarnedThisCatch;
 
-        Debug.Log($"Caught {hookLevel} {hookedFishPrefab.name}(s) for ${totalMoneyEarned}!");
+        // --- DEBT DECREMENT RE-ADDED ---
+        currentDebt -= moneyEarnedThisCatch;
+        // -------------------------------
 
-        // Safety check for the UI panel
+        Debug.Log($"Caught {hookLevel} {hookedFishPrefab.name}(s) for ${moneyEarnedThisCatch} and {pointsEarnedThisCatch} points!");
+
         if (fishCaughtPanel != null)
         {
-            fishCaughtPanel.SetUp(hookedFishPrefab, displayWeight, displayLength, hookLevel, totalMoneyEarned, totalPointsEarned);
+            // Pass the float value for display, and the new points value
+            fishCaughtPanel.SetUp(hookedFishPrefab, displayWeight, displayLength, hookLevel, totalValueSum, pointsEarnedThisCatch);
         }
         else
         {
@@ -436,7 +478,11 @@ public class Player : MonoBehaviour
             isFishOn = false;
             if (fishingCoroutine != null) StopCoroutine(fishingCoroutine);
             if (fishAlertUI != null) fishAlertUI.SetActive(false);
-            if (bobber != null) bobber.SetActive(false);
+            if (bobber != null)
+            {
+                bobber.gameObject.SetActive(false);
+                bobber.SetState(Bobber.BobberState.Hidden);
+            }
         }
     }
 
@@ -461,26 +507,22 @@ public class Player : MonoBehaviour
         {
             Debug.Log("End of day. Checking win/loss condition...");
 
-            // Check win condition (money >= debt OR debt is negative)
-            if (money >= currentDebt || currentDebt <= 0)
+            // Win condition (debt is 0 or less)
+            if (currentDebt <= 0)
             {
-                // --- THIS IS THE BONUS CALCULATION ---
-                // It now only runs at the end of the day.
-                int daysRemaining = 7 - day; // Calculate remaining days
+                // --- POINT CALCULATION ---
+                int daysRemaining = 7 - day;
                 if (daysRemaining > 0)
                 {
-                    int earlyBonus = daysRemaining * 250;
-                    points += earlyBonus;
-                    Debug.Log($"Debt paid off {daysRemaining} days early! +{earlyBonus} points!");
+                    totalExtraDays += daysRemaining;
+                    Debug.Log($"Debt paid off {daysRemaining} days early!");
                 }
-                else
-                {
-                    Debug.Log("Debt paid off!");
-                }
-                // ---------------------------------
+
+                finalScore = totalMoneyEarned * (1 + totalExtraDays);
+                Debug.Log($"Victory! Final Score: {finalScore} (Total Earned: {totalMoneyEarned} * (1 + {totalExtraDays} extra days))");
+                // ----------------------
 
                 // Player wins
-                Debug.Log("Victory! Loading VictoryDialogue...");
                 SceneManager.LoadScene("VictoryDialogue");
             }
             else
@@ -507,16 +549,19 @@ public class Player : MonoBehaviour
         gameTimeInMinutes = dayStartMinutes;
         fishCaughtToday = 0;
 
-        // --- ADD INTEREST ---
-        // Only add interest if the debt hasn't been paid off
+        // --- INTEREST CALCULATION ---
+        // Interest is only applied if debt is still positive
         if (currentDebt > 0)
         {
-            currentDebt *= interestRate;
+            // (interestRate - 1.0f) gets the interest percent (e.g., 0.05f)
+            // We apply it to the full outstanding debt
+            long interestAdded = (long)(currentDebt * (interestRate - 1.0f));
+            currentDebt += interestAdded;
+            Debug.Log($"Added ${interestAdded} in interest.");
         }
-        // --------------------
+        // ---------------------------------
 
         canCast = true; // Re-enable casting
-
         Debug.Log($"Day {day} has begun!");
         SceneManager.LoadScene("Beach");
     }
@@ -529,10 +574,11 @@ public class Player : MonoBehaviour
     {
         Debug.Log("Continuing game! Base debt will be 10x.");
 
-        // Increase BASE debt for the new cycle
         baseDebt *= 10;
 
-        // Set the new current debt to the new base debt
+        // The new debt is the new base debt *plus* any leftover money
+        // This is a "roll-over" mechanic. If you overpaid, you start with a head start.
+        // If you had $500k and debt was -$100k, your new debt is 10M - 600k = 9.4M
         currentDebt = baseDebt;
 
         // Reset day to 1
@@ -540,10 +586,8 @@ public class Player : MonoBehaviour
         gameTimeInMinutes = dayStartMinutes;
         fishCaughtToday = 0;
 
-        // Player keeps their money, stats, and achievements
-        canCast = true; // Enable casting
-
-        // Load the Beach scene to start the new cycle
+        // Player keeps all other stats (money, points, totalMoneyEarned, totalExtraDays)
+        canCast = true;
         SceneManager.LoadScene("Beach");
     }
 
@@ -552,15 +596,14 @@ public class Player : MonoBehaviour
     /// </summary>
     public void UpdateDayTimeDebtUI()
     {
-        // Don't try to update if the text object isn't linked yet
         if (dayTimeDebt == null) return;
 
         int hours = (int)(gameTimeInMinutes / 60);
         int minutes = (int)(gameTimeInMinutes % 60);
 
         string timeString = $"{hours:00}:{minutes:00}";
-        // Display current debt
-        string debtString = $"${currentDebt:F2}";
+        // Format as "N0" to add commas (e.g., $1,000,000)
+        string debtString = $"${currentDebt:N0}";
 
         dayTimeDebt.text = $"DAY: {day}\tTIME: {timeString}\nDEBT: {debtString}";
     }

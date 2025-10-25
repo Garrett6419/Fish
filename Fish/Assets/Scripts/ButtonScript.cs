@@ -35,6 +35,17 @@ public class StartGameScript : MonoBehaviour
         SceneManager.LoadScene("Start");
     }
 
+    public void IntroDialogue()
+    {
+        SceneManager.LoadScene("IntroDialogue");
+    }
+
+    public void ContinueDialogue()
+    {
+        PlayerObj.GetComponent<Player>().ContinueGame();
+        SceneManager.LoadScene("ContinueDialogue");
+    }
+
 
 
     

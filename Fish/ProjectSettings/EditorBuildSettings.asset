@@ -15,17 +15,29 @@ EditorBuildSettings:
     path: Assets/Scenes/Achievements.unity
     guid: 558035c8c3885964484a375a7dd22342
   - enabled: 1
-<<<<<<< Updated upstream
     path: Assets/Scenes/DayOver.unity
     guid: dca3d2f0451b02f4db051f75a04ead59
   - enabled: 1
     path: Assets/Scenes/Dialogue/IntroDialogue.unity
     guid: 4f3051bdd83a8524fbbc4d2a51b64bb8
   - enabled: 1
-=======
->>>>>>> Stashed changes
     path: Assets/Scenes/Start.unity
     guid: 63dce6bb21b33c040832eb423eacfc59
+  - enabled: 1
+    path: Assets/Scenes/Dialogue/ContinueDialogue.unity
+    guid: b8a57367fa9f0534681affa9eb87a051
+  - enabled: 1
+    path: Assets/Scenes/Dialogue/GameOverDialogue.unity
+    guid: 4e3e0c817f5b6d044bba3d7f7cfdf19c
+  - enabled: 1
+    path: Assets/Scenes/Dialogue/VictoryDialogue.unity
+    guid: aad801e488d61294f829fb77556a7f4b
+  - enabled: 1
+    path: Assets/Scenes/GameOver.unity
+    guid: b40b06faf1d5d634cb859f88ae181768
+  - enabled: 1
+    path: Assets/Scenes/Victory.unity
+    guid: 41325bc9e55534c4a950f330d4266b26
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
