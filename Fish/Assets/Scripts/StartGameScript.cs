@@ -22,7 +22,7 @@ public class StartGameScript : MonoBehaviour
 
     public void OpenTrophyCase()
     {
-        SceneManager.LoadScene("Shop");
+        SceneManager.LoadScene("Achievements");
     }
 
     public void StartGame()

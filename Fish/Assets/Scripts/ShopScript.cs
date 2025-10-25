@@ -9,6 +9,7 @@ public class ShopScript : MonoBehaviour
     private GameObject PlayerObj;
     private Player MainPlayer;
     public float Mult = 1.5F;
+    public float baseMult = 1.5f;
 
     public TMP_Text playerPoints;
     public TMP_Text weightButton;
@@ -40,10 +41,10 @@ public class ShopScript : MonoBehaviour
     public void UpgradeWeight()
     {
         //Check for players points and then upgrade the weight mult
-        if (MainPlayer.points >= (int)Math.Pow(2, (MainPlayer.weightLevel-1)))
+        if (MainPlayer.points >= (int)Math.Pow(baseMult, (MainPlayer.weightLevel-1)))
         {
             MainPlayer.weightMult *= Mult;
-            MainPlayer.points -= (int)Math.Pow(2, (MainPlayer.weightLevel-1));
+            MainPlayer.points -= (int)Math.Pow(baseMult, (MainPlayer.weightLevel-1));
             MainPlayer.weightLevel += 1;
         }
     }
@@ -51,10 +52,10 @@ public class ShopScript : MonoBehaviour
     public void UpgradeLength()
     {
         //Check for player points and then upgrade the player's mult
-        if (MainPlayer.points >= (int)Math.Pow(2, (MainPlayer.lengthLevel-1)))
+        if (MainPlayer.points >= (int)Math.Pow(baseMult, (MainPlayer.lengthLevel-1)))
         {
             MainPlayer.lengthMult *= Mult;
-            MainPlayer.points -= (int)Math.Pow(2, (MainPlayer.lengthLevel - 1));
+            MainPlayer.points -= (int)Math.Pow(baseMult, (MainPlayer.lengthLevel - 1));
             MainPlayer.lengthLevel += 1;
         }
     }
@@ -62,9 +63,9 @@ public class ShopScript : MonoBehaviour
     public void UpgradeHooks()
     {
         //Check if the player has the necessary points and then increment the hookLevel
-        if (MainPlayer.points >= (int)Math.Pow(2, (MainPlayer.hookLevel - 1)))
+        if (MainPlayer.points >= (int)Math.Pow(baseMult, (MainPlayer.hookLevel - 1)))
         {
-            MainPlayer.points -= (int)Math.Pow(2, (MainPlayer.hookLevel - 1));
+            MainPlayer.points -= (int)Math.Pow(baseMult, (MainPlayer.hookLevel - 1));
             MainPlayer.hookLevel += 1;
         }
     }
@@ -73,9 +74,9 @@ public class ShopScript : MonoBehaviour
     {
         //Update each TMP every tick
         playerPoints.text = "" + MainPlayer.points + " Points";
-        weightButton.text = "Upgrade Fish Weight\n" + (int)Math.Pow(2, (MainPlayer.weightLevel - 1)) + " Points";
-        lengthButton.text = "Upgrade Fish Length\n" + (int)Math.Pow(2, (MainPlayer.lengthLevel - 1)) + " Points";
-        hookButton.text = "Upgrade # Of Hooks\n" + (int)Math.Pow(2, (MainPlayer.hookLevel - 1)) + " Points";
+        weightButton.text = "Upgrade Fish Weight\n" + (int)Math.Pow(baseMult, (MainPlayer.weightLevel - 1)) + " Points";
+        lengthButton.text = "Upgrade Fish Length\n" + (int)Math.Pow(baseMult, (MainPlayer.lengthLevel - 1)) + " Points";
+        hookButton.text = "Upgrade # Of Hooks\n" + (int)Math.Pow(baseMult, (MainPlayer.hookLevel - 1)) + " Points";
     }
 
     public void ClickedHat()
