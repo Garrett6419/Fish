@@ -22,11 +22,14 @@ public class Player : MonoBehaviour
     private float[] longestCaught;
     private float[] shortestCaught;
 
-    private GameObject bobber;
+    private Rigidbody2D bobber;
+
+    private bool canCast;
 
     public void Cast()
     {
-
+        canCast = false;
+        bobber.AddForce(new(Random.Range(5,8), Random.Range(5,8)));
     }
 
     private IEnumerable CastTime()
@@ -37,6 +40,11 @@ public class Player : MonoBehaviour
     public void Reel()
     {
 
+    }
+
+    public void SetCanCast(bool cast)
+    {
+        canCast = cast;
     }
 
 
