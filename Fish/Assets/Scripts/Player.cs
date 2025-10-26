@@ -122,6 +122,8 @@ public class Player : MonoBehaviour
     /// </summary>
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        SerializeJson();
+
         // Check for the main fishing scene
         if (scene.name == "Beach") //
         {
@@ -548,8 +550,6 @@ public class Player : MonoBehaviour
     private void EndDay()
     {
         Debug.Log($"Day {day} has ended.");
-
-        SerializeJson(); //
 
         // Stop all fishing activity
         SetCanCast(false);
