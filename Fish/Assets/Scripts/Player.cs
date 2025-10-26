@@ -43,8 +43,14 @@ public class Player : MonoBehaviour
 
     [Header("Debt")]
     [SerializeField] private long baseDebt = 1000000;
+    // --- NEW ---
+    // We use this const to calculate our difficulty multiplier
+    private const long STARTING_BASE_DEBT = 1000000;
+    // -----------
     public long currentDebt; // The active debt, including interest
     [SerializeField] private float interestRate = 1.05f; // 5% interest per day
+    [SerializeField] private float debtAnimationDuration = 2.0f; // Animate over 2 seconds
+    private double displayDebt; // Use double for smooth animation
 
     // --- Casting Fields ---
     [Header("Casting")]
@@ -114,7 +120,7 @@ public class Player : MonoBehaviour
     void OnDisable()
     {
         // Unsubscribe when disabled
-        SceneManager.sceneLoaded -= OnSceneLoaded; //
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     /// <summary>
@@ -122,10 +128,8 @@ public class Player : MonoBehaviour
     /// </summary>
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        SerializeJson();
-
         // Check for the main fishing scene
-        if (scene.name == "Beach") //
+        if (scene.name == "Beach")
         {
             Debug.Log("Beach scene loaded, re-linking references...");
             RelinkReferences();
@@ -138,8 +142,10 @@ public class Player : MonoBehaviour
         else
         {
             // We are in the Shop, DayOver, Dialogue, etc.
-            inFishingScene = false; //
+            inFishingScene = false;
         }
+
+        StartCoroutine(EnableEventSystemCooldown());
     }
 
     private IEnumerator EnableInputCooldown()
@@ -148,6 +154,31 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
         inputDisabled = false;
         Debug.Log("Input enabled.");
+    }
+
+    /// <summary>
+    /// Disables the UI EventSystem for a fraction of a second
+    /// to "eat" the mouse click from the previous scene.
+    /// </summary>
+    private IEnumerator EnableEventSystemCooldown()
+    {
+        // Find the EventSystem in the newly loaded scene
+        UnityEngine.EventSystems.EventSystem eventSystem = FindFirstObjectByType<UnityEngine.EventSystems.EventSystem>();
+
+        if (eventSystem != null)
+        {
+            // Disable it immediately
+            eventSystem.enabled = false;
+
+            // Wait for a very short time
+            yield return new WaitForSeconds(0.1f);
+
+            // Re-enable it (if it still exists)
+            if (eventSystem != null)
+            {
+                eventSystem.enabled = true;
+            }
+        }
     }
 
     /// <summary>
@@ -171,22 +202,22 @@ public class Player : MonoBehaviour
             if (dayTimeDebt != null) UpdateDayTimeDebtUI();
 
             // Initialize stat arrays if this is the first time
-            if (PlayerStats.numCaught == null && fishSpawner != null) //
+            if (PlayerStats.numCaught == null && fishSpawner != null)
             {
-                int fishTypeCount = fishSpawner.GetFishTypeCount(); //
+                int fishTypeCount = fishSpawner.GetFishTypeCount();
                 Debug.Log($"Initializing stats for {fishTypeCount} fish types.");
 
-                PlayerStats.numCaught = new int[fishTypeCount]; //
-                PlayerStats.heaviestCaught = new float[fishTypeCount]; //
-                PlayerStats.lightestCaught = new float[fishTypeCount]; //
-                PlayerStats.longestCaught = new float[fishTypeCount]; //
-                PlayerStats.shortestCaught = new float[fishTypeCount]; //
+                PlayerStats.numCaught = new int[fishTypeCount];
+                PlayerStats.heaviestCaught = new float[fishTypeCount];
+                PlayerStats.lightestCaught = new float[fishTypeCount];
+                PlayerStats.longestCaught = new float[fishTypeCount];
+                PlayerStats.shortestCaught = new float[fishTypeCount];
 
                 // Initialize lightest/shortest arrays to MaxValue
                 for (int i = 0; i < fishTypeCount; i++)
                 {
-                    PlayerStats.lightestCaught[i] = float.MaxValue; //
-                    PlayerStats.shortestCaught[i] = float.MaxValue; //
+                    PlayerStats.lightestCaught[i] = float.MaxValue;
+                    PlayerStats.shortestCaught[i] = float.MaxValue;
                 }
             }
         }
@@ -213,6 +244,9 @@ public class Player : MonoBehaviour
         // Set the current debt to the base debt on first start
         currentDebt = baseDebt;
 
+        // Sync the display debt to the real debt on start
+        displayDebt = currentDebt;
+
         // Failsafe to link references if the game starts in the Beach scene
         RelinkReferences();
     }
@@ -238,6 +272,8 @@ public class Player : MonoBehaviour
             EndDay();
             return;
         }
+
+        // We now call this every frame to animate the debt
         if (dayTimeDebt != null)
             UpdateDayTimeDebtUI();
 
@@ -290,15 +326,13 @@ public class Player : MonoBehaviour
         isCasting = true;
         isFishOn = false;
 
-        // --- NEW ---
         if (playerAnimator != null)
         {
             playerAnimator.SetTrigger("Cast");
         }
-        // -----------
 
-        // Position and launch bobber
-        StartCoroutine(LaunchBobberAfterDelay(0.5f));
+        // Start the new delay coroutine
+        StartCoroutine(LaunchBobberAfterDelay(0.5f)); //
     }
 
     /// <summary>
@@ -318,6 +352,9 @@ public class Player : MonoBehaviour
         bobber.gameObject.SetActive(true);
         bobber.transform.position = bobberDefault.position;
         bobberRb.AddForce(new(UnityEngine.Random.Range(lowCast, highCast), UnityEngine.Random.Range(lowCast, highCast)));
+
+        // Set state to Hidden. The bobber's own collision
+        // will set it to "Waiting" when it hits the water.
         bobber.SetState(Bobber.BobberState.Hidden);
 
         // 4. Start the main fishing loop coroutine
@@ -326,10 +363,8 @@ public class Player : MonoBehaviour
 
     private IEnumerator CastTime()
     {
-        // --- TIMING CHANGED ---
-        const float perfectWindow = 0.3f; //
-        const float totalWindow = 1.5f; //
-        // ----------------------
+        const float perfectWindow = 0.3f;
+        const float totalWindow = 1.5f;
 
         while (isCasting)
         {
@@ -337,9 +372,9 @@ public class Player : MonoBehaviour
             isFishOn = false;
             if (fishAlertUI != null) fishAlertUI.SetActive(false);
 
-            hookedFishPrefab = fishSpawner.GetFish(out hookedFishID); //
+            hookedFishPrefab = fishSpawner.GetFish(out hookedFishID);
 
-            float waitTime = UnityEngine.Random.Range(2.0f, 3.0f); //
+            float waitTime = UnityEngine.Random.Range(2.0f, 3.0f);
             yield return new WaitForSeconds(waitTime);
 
             if (!isCasting) yield break;
@@ -360,7 +395,7 @@ public class Player : MonoBehaviour
             }
 
             // 4. Wait for the rest of the total window
-            yield return new WaitForSeconds(totalWindow - perfectWindow); //
+            yield return new WaitForSeconds(totalWindow - perfectWindow);
 
             // 5. Check if player was too slow
             if (isFishOn)
@@ -373,20 +408,18 @@ public class Player : MonoBehaviour
 
     public void Reel()
     {
-        // --- NEW ---
         if (playerAnimator != null)
         {
             playerAnimator.SetTrigger("Reel");
         }
-        // -----------
 
         // Hide and reset the bobber
         bobber.gameObject.SetActive(false);
         bobber.SetState(Bobber.BobberState.Hidden);
 
         // --- FIXED ---
-        bobberRb.linearVelocity = Vector2.zero; // Was .linearVelocity
-                                          // -------------
+        bobberRb.linearVelocity = Vector2.zero; //
+        // -------------
 
         bobberRb.angularVelocity = 0f;
 
@@ -398,8 +431,7 @@ public class Player : MonoBehaviour
         if (fishAlertUI != null) fishAlertUI.SetActive(false);
 
         float timingMultiplier = 1.0f;
-        // --- TIMING CHANGED ---
-        if (reactionTimer <= 0.3f) //
+        if (reactionTimer <= 0.3f)
         {
             Debug.Log("Perfect catch! +20% bonus!");
             timingMultiplier = 1.2f;
@@ -408,7 +440,6 @@ public class Player : MonoBehaviour
         {
             Debug.Log("Good catch!");
         }
-        // ----------------------
 
         ProcessCatch(timingMultiplier);
     }
@@ -420,18 +451,17 @@ public class Player : MonoBehaviour
     {
         Debug.Log("Reeled in too early! Resetting cast.");
 
-        // --- NEW ---
         if (playerAnimator != null)
         {
-            playerAnimator.SetTrigger("Reel");
+            playerAnimator.SetTrigger("Reset");
         }
-        // -----------
 
         bobber.gameObject.SetActive(false);
         bobber.SetState(Bobber.BobberState.Hidden);
 
         // --- FIXED ---
-        bobberRb.linearVelocity = Vector2.zero;
+        bobberRb.linearVelocity = Vector2.zero; //
+        // -------------
 
         bobberRb.angularVelocity = 0f;
 
@@ -450,6 +480,7 @@ public class Player : MonoBehaviour
         {
             Debug.LogError("ProcessCatch FAILED: hookedFishPrefab was null.");
             SetCanCast(true);
+            if (playerAnimator != null) playerAnimator.SetTrigger("Reset"); // Error handling
             return;
         }
 
@@ -458,6 +489,7 @@ public class Player : MonoBehaviour
         {
             Debug.LogError($"Hooked fish prefab '{hookedFishPrefab.name}' is missing Fish component!");
             SetCanCast(true);
+            if (playerAnimator != null) playerAnimator.SetTrigger("Reset"); // Error handling
             return;
         }
 
@@ -467,8 +499,8 @@ public class Player : MonoBehaviour
 
         for (int i = 0; i < hookLevel; i++)
         {
-            float actualWeight = fishData.weight * UnityEngine.Random.Range(0.8f, 1.2f); //
-            float actualLength = fishData.length * UnityEngine.Random.Range(0.8f, 1.2f); //
+            float actualWeight = fishData.weight * UnityEngine.Random.Range(0.8f, 1.2f);
+            float actualLength = fishData.length * UnityEngine.Random.Range(0.8f, 1.2f);
             actualWeight *= timingMultiplier * weightMult;
             actualLength *= timingMultiplier * lengthMult;
 
@@ -483,18 +515,21 @@ public class Player : MonoBehaviour
         }
 
         long moneyEarnedThisCatch = (long)Mathf.Floor(totalValueSum);
-        long pointsEarnedThisCatch = (long)Mathf.Floor((hookLevel / 2f) + 0.5f); //
+
+        // --- NEW SCALING POINT LOGIC ---
+        long basePoints = (long)Mathf.Floor((hookLevel / 2f) + 0.5f);
+        // Ensure multiplier is at least 1
+        long difficultyMultiplier = Math.Max(1, (baseDebt / STARTING_BASE_DEBT));
+        long pointsEarnedThisCatch = basePoints * difficultyMultiplier;
+        // -------------------------------
 
         // Update player totals
         money += moneyEarnedThisCatch;
         totalMoneyEarned += moneyEarnedThisCatch;
         points += pointsEarnedThisCatch;
+        currentDebt -= moneyEarnedThisCatch;
 
-        // --- DEBT DECREMENT RE-ADDED ---
-        currentDebt -= moneyEarnedThisCatch; //
-        // -------------------------------
-
-        Debug.Log($"Caught {hookLevel} {hookedFishPrefab.name}(s) for ${moneyEarnedThisCatch} and {pointsEarnedThisCatch} points!");
+        Debug.Log($"Caught {hookLevel} {hookedFishPrefab.name}(s) for ${moneyEarnedThisCatch} and {pointsEarnedThisCatch} points! (Multiplier: {difficultyMultiplier}x)");
 
         if (fishCaughtPanel != null)
         {
@@ -505,6 +540,7 @@ public class Player : MonoBehaviour
         {
             Debug.LogError("ProcessCatch FAILED: fishCaughtPanel reference is null.");
             SetCanCast(true);
+            if (playerAnimator != null) playerAnimator.SetTrigger("Reset"); // Error handling
         }
     }
 
@@ -515,6 +551,7 @@ public class Player : MonoBehaviour
     public void SetCanCast(bool cast)
     {
         canCast = cast;
+
         if (!cast)
         {
             // Force-stop all fishing activity
@@ -527,14 +564,12 @@ public class Player : MonoBehaviour
                 bobber.gameObject.SetActive(false);
                 bobber.SetState(Bobber.BobberState.Hidden);
             }
+        }
 
-            // --- NEW ---
-            // Reset player animation to idle
-            if (playerAnimator != null)
-            {
-                playerAnimator.SetTrigger("Reset");
-            }
-            // -----------
+        // We must reset the animator in BOTH cases.
+        if (playerAnimator != null)
+        {
+            playerAnimator.SetTrigger("Reset");
         }
     }
 
@@ -551,34 +586,35 @@ public class Player : MonoBehaviour
     {
         Debug.Log($"Day {day} has ended.");
 
+        SerializeJson();
+
         // Stop all fishing activity
         SetCanCast(false);
 
         // Check for end of 7-day cycle OR if debt is paid off
-        if (day >= 7 || currentDebt <= 0) //
+        if (day >= 7 || currentDebt <= 0)
         {
             Debug.Log("End of day. Checking win/loss condition...");
 
             // Win condition (debt is 0 or less)
-            if (currentDebt <= 0) //
+            if (currentDebt <= 0)
             {
-                // --- MODIFIED: ADD SHOP POINT BONUS ---
-                int daysRemaining = 7 - day; //
+                // --- MODIFIED: ADD SCALING SHOP POINT BONUS ---
+                int daysRemaining = 7 - day;
                 if (daysRemaining > 0)
                 {
-                    // Add to final score tracker
-                    totalExtraDays += daysRemaining; //
+                    totalExtraDays += daysRemaining;
 
-                    // --- NEW: Add to shop points ---
-                    long bonusShopPoints = daysRemaining * 250;
+                    // --- NEW SCALING BONUS ---
+                    long difficultyMultiplier = Math.Max(1, (baseDebt / STARTING_BASE_DEBT));
+                    long bonusShopPoints = daysRemaining * 250 * difficultyMultiplier;
                     points += bonusShopPoints;
-                    Debug.Log($"Debt paid off {daysRemaining} days early! +{bonusShopPoints} shop points!");
+                    Debug.Log($"Debt paid off {daysRemaining} days early! +{bonusShopPoints} shop points! (Multiplier: {difficultyMultiplier}x)");
                     // -------------------------------
                 }
 
-                finalScore = totalMoneyEarned * (1 + totalExtraDays); //
+                finalScore = totalMoneyEarned * (1 + totalExtraDays);
                 Debug.Log($"Victory! Final Score: {finalScore} (Total Earned: {totalMoneyEarned} * (1 + {totalExtraDays} extra days))");
-                // ----------------------
 
                 // Player wins
                 SceneManager.LoadScene("VictoryDialogue");
@@ -608,26 +644,22 @@ public class Player : MonoBehaviour
         fishCaughtToday = 0;
 
         // --- INTEREST CALCULATION ---
-        // Interest is only applied if debt is still positive
-        if (currentDebt > 0) //
+        if (currentDebt > 0)
         {
-            // (interestRate - 1.0f) gets the interest percent (e.g., 0.05f)
-            // We apply it to the full outstanding debt
-            long interestAdded = (long)(currentDebt * (interestRate - 1.0f)); //
+            long interestAdded = (long)(currentDebt * (interestRate - 1.0f));
             currentDebt += interestAdded;
             Debug.Log($"Added ${interestAdded} in interest.");
         }
-        // ---------------------------------
+
+        // Instantly snap the display debt to the new value (with interest)
+        displayDebt = currentDebt;
 
         canCast = true; // Re-enable casting
 
-        // --- NEW ---
-        // Reset player animation to idle for the new day
         if (playerAnimator != null)
         {
             playerAnimator.SetTrigger("Reset");
         }
-        // -----------
 
         Debug.Log($"Day {day} has begun!");
         SceneManager.LoadScene("Beach");
@@ -641,8 +673,11 @@ public class Player : MonoBehaviour
     {
         Debug.Log("Continuing game! Base debt will be 10x.");
 
-        baseDebt *= 10; //
-        currentDebt = baseDebt; //
+        baseDebt *= 10;
+        currentDebt = baseDebt;
+
+        // Instantly sync display debt to new real debt
+        displayDebt = currentDebt;
 
         // Reset day to 1
         day = 1;
@@ -661,12 +696,39 @@ public class Player : MonoBehaviour
     {
         if (dayTimeDebt == null) return;
 
+        // --- DEBT ANIMATION LOGIC ---
+        if (displayDebt != currentDebt)
+        {
+            double difference = displayDebt - currentDebt;
+            double speed = difference / debtAnimationDuration;
+
+            if (debtAnimationDuration <= 0)
+            {
+                displayDebt = currentDebt;
+            }
+            else
+            {
+                double step = speed * Time.deltaTime;
+
+                if (displayDebt > currentDebt)
+                {
+                    // Count down
+                    displayDebt = Math.Max(currentDebt, displayDebt - step);
+                }
+                else if (displayDebt < currentDebt)
+                {
+                    // Count up (for interest)
+                    displayDebt = Math.Min(currentDebt, displayDebt - step);
+                }
+            }
+        }
+
         int hours = (int)(gameTimeInMinutes / 60);
         int minutes = (int)(gameTimeInMinutes % 60);
 
         string timeString = $"{hours:00}:{minutes:00}";
-        // Format as "N0" to add commas (e.g., $1,000,000)
-        string debtString = $"${currentDebt:N0}";
+
+        string debtString = $"${(long)displayDebt:N0}";
 
         dayTimeDebt.text = $"DAY: {day}\tTIME: {timeString}\nDEBT: {debtString}";
     }
@@ -686,26 +748,26 @@ public class Player : MonoBehaviour
         fishCaughtToday++;
 
         // --- 2. Update Overall Stats ---
-        PlayerStats.numAllCaught++; //
+        PlayerStats.numAllCaught++;
 
-        if (weight > PlayerStats.heaviestAllCaught) PlayerStats.heaviestAllCaught = weight; //
-        if (weight < PlayerStats.lightestAllCaught) PlayerStats.lightestAllCaught = weight; //
-        if (length > PlayerStats.longestAllCaught) PlayerStats.longestAllCaught = length; //
-        if (length < PlayerStats.shortestAllCaught) PlayerStats.shortestAllCaught = length; //
+        if (weight > PlayerStats.heaviestAllCaught) PlayerStats.heaviestAllCaught = weight;
+        if (weight < PlayerStats.lightestAllCaught) PlayerStats.lightestAllCaught = weight;
+        if (length > PlayerStats.longestAllCaught) PlayerStats.longestAllCaught = length;
+        if (length < PlayerStats.shortestAllCaught) PlayerStats.shortestAllCaught = length;
 
         // --- 3. Update Per-Fish Stats ---
-        if (id < 0 || PlayerStats.numCaught == null || id >= PlayerStats.numCaught.Length) //
+        if (id < 0 || PlayerStats.numCaught == null || id >= PlayerStats.numCaught.Length)
         {
             Debug.LogError($"Invalid fish ID {id} or stats array not initialized!");
             return;
         }
 
-        PlayerStats.numCaught[id]++; //
+        PlayerStats.numCaught[id]++;
 
-        if (weight > PlayerStats.heaviestCaught[id]) PlayerStats.heaviestCaught[id] = weight; //
-        if (weight < PlayerStats.lightestCaught[id]) PlayerStats.lightestCaught[id] = weight; //
-        if (length > PlayerStats.longestCaught[id]) PlayerStats.longestCaught[id] = length; //
-        if (length < PlayerStats.shortestCaught[id]) PlayerStats.shortestCaught[id] = length; //
+        if (weight > PlayerStats.heaviestCaught[id]) PlayerStats.heaviestCaught[id] = weight;
+        if (weight < PlayerStats.lightestCaught[id]) PlayerStats.lightestCaught[id] = weight;
+        if (length > PlayerStats.longestCaught[id]) PlayerStats.longestCaught[id] = length;
+        if (length < PlayerStats.shortestCaught[id]) PlayerStats.shortestCaught[id] = length;
     }
 
     /// <summary>
@@ -729,20 +791,20 @@ public class Player : MonoBehaviour
 
     public void SerializeJson()
     {
-        if (DataService.SaveData("/player-stats.json", PlayerStats, EncryptionEnabled)) //
+        if (DataService.SaveData("/player-stats.json", PlayerStats, EncryptionEnabled))
         {
             try
             {
-                PlayerStats data = DataService.LoadData<PlayerStats>("/player-stats.json", EncryptionEnabled); //
+                PlayerStats data = DataService.LoadData<PlayerStats>("/player-stats.json", EncryptionEnabled);
             }
             catch (Exception e)
             {
-                Debug.Log($"Error {e.Message}"); //
+                Debug.Log($"Error {e.Message}");
             }
         }
         else
         {
-            Debug.Log("Couldn't Save File"); //
+            Debug.Log("Couldn't Save File");
         }
     }
 

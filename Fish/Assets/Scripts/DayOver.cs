@@ -30,19 +30,18 @@ public class DayOver : MonoBehaviour
         int day = player.day;
         int fishCaught = player.GetFishCaughtToday();
         long debt = player.currentDebt;
-        long money = player.money;
 
-        // --- NEW: Calculate interest for display ---
-        // This matches the logic in Player.cs
-        long netDebt = debt - money;
+        // --- THIS BLOCK IS NOW CORRECTED ---
+        // It now matches the logic in Player.cs
         long interestToShow = 0;
 
-        if (netDebt > 0)
+        // Check if debt is positive (no interest on paid-off debt)
+        if (debt > 0)
         {
             // We use 0.05f here just for the display calculation
-            interestToShow = (long)(netDebt * 0.05f);
+            interestToShow = (long)(debt * 0.05f);
         }
-        // -----------------------------------------
+        // -----------------------------------
 
         // Start the animation
         StartCoroutine(AnimateSummary(day, fishCaught, debt, interestToShow));
@@ -67,7 +66,6 @@ public class DayOver : MonoBehaviour
         string line1 = $"Day {day} Complete\n\n";
         string line2 = "Fish Caught Today:\n";
         string line4 = "\n\nTotal Debt Remaining:\n";
-        // --- NEW LINE ---
         string line5 = "\n\nInterest Acquired:\n";
         string line6 = "\n\nPress To Continue";
 
@@ -115,7 +113,7 @@ public class DayOver : MonoBehaviour
                            line4 + "$" + debt.ToString("N0");
         yield return new WaitForSeconds(lineDelay);
 
-        // --- NEW: Animate Interest Ticker ---
+        // --- Animate Interest Ticker ---
         summaryText.text += line5;
         yield return new WaitForSeconds(lineDelay * 0.5f);
 

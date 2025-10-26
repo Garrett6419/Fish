@@ -2029,16 +2029,17 @@ MonoBehaviour:
   finalScore: 0
   totalMoneyEarned: 0
   totalExtraDays: 0
-  baseDebt: 1000
+  baseDebt: 100000
   currentDebt: 0
   interestRate: 1.05
+  debtAnimationDuration: 2
   lowCast: 100
   highCast: 300
   bobberRb: {fileID: 1155587136}
   bobber: {fileID: 1155587138}
   bobberDefault: {fileID: 1745856042}
   playerAnimator: {fileID: 1047403345}
-  day: 0
+  day: 1
   timeScale: 10
 --- !u!4 &1353796855
 Transform:
