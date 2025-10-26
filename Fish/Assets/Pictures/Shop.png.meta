@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 6970eeff1daff444c8316248e0414de5
+guid: e8b8a759ba0ea284cacf21cd30de63f9
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1736887327352555311
-    second: TKPose1_0
+      213: -1151905075149521417
+    second: Shop_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: TKPose1_0
+      name: Shop_0
       rect:
         serializedVersion: 2
-        x: 22
-        y: 1
-        width: 194
-        height: 192
+        x: 0
+        y: 0
+        width: 401
+        height: 226
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1d8f54e9d2655e7e0800000000000000
-      internalID: -1736887327352555311
+      spriteID: 7fd3ebcef6c9300f0800000000000000
+      internalID: -1151905075149521417
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      TKPose1_0: -1736887327352555311
+      Shop_0: -1151905075149521417
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

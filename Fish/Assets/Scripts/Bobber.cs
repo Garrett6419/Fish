@@ -20,6 +20,7 @@ public class Bobber : MonoBehaviour
     [SerializeField] private GameObject alert2;
 
     private Coroutine waitingAnimationCoroutine;
+    private BobberState currentState; // Keep track of our state
 
     void Start()
     {
@@ -29,10 +30,12 @@ public class Bobber : MonoBehaviour
 
     /// <summary>
     /// Public method to change the bobber's visual state.
-    /// Called by Player.cs.
+    /// Called by Player.cs OR by this script's collision events.
     /// </summary>
     public void SetState(BobberState newState)
     {
+        currentState = newState; // Track the new state
+
         // Stop any running animations
         if (waitingAnimationCoroutine != null)
         {
@@ -63,6 +66,31 @@ public class Bobber : MonoBehaviour
                 break;
         }
     }
+
+    // --- CHANGED METHOD ---
+    // This runs when our SOLID collider hits another SOLID collider
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        // Check if we hit the water AND we are currently "Hidden"
+        if (collision.gameObject.CompareTag("Water") && currentState == BobberState.Hidden)
+        {
+            // We hit the water. Start the wait animation.
+            SetState(BobberState.Waiting);
+        }
+    }
+
+    // --- CHANGED METHOD ---
+    // This runs when we stop touching the other SOLID collider
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        // Check if we left the water AND we were in the Waiting state
+        if (collision.gameObject.CompareTag("Water") && currentState == BobberState.Waiting)
+        {
+            // We are no longer in the water, hide the dots.
+            SetState(BobberState.Hidden);
+        }
+    }
+
 
     /// <summary>
     /// Coroutine that handles the "1-2-3" bobbing animation.

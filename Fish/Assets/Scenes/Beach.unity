@@ -1486,12 +1486,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -1736887327352555311, guid: 6970eeff1daff444c8316248e0414de5, type: 3}
+  m_Sprite: {fileID: 4731341748403077209, guid: df0680d3e2224fd4a85a1fd0f7eb38b8, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1.94, y: 1.92}
+  m_Size: {x: 8.15, y: 8.05}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -1506,8 +1506,8 @@ Transform:
   m_GameObject: {fileID: 1047403342}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.93, y: -0.25, z: -0.0070373677}
-  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
+  m_LocalPosition: {x: -3.97, y: -1.88, z: -0.0070373677}
+  m_LocalScale: {x: 0.48000002, y: 0.48000002, z: 0.48000002}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1353796855}
@@ -1858,7 +1858,7 @@ GameObject:
   - component: {fileID: 1235185505}
   m_Layer: 0
   m_Name: Water
-  m_TagString: Untagged
+  m_TagString: Water
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2007,14 +2007,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3a690e994e76a74392add8cfa09b062, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PlayerStats:
+    numAllCaught: 0
+    heaviestAllCaught: 0
+    lightestAllCaught: 3.4028235e+38
+    longestAllCaught: 0
+    shortestAllCaught: 3.4028235e+38
+    numCaught: 
+    heaviestCaught: []
+    lightestCaught: []
+    longestCaught: []
+    shortestCaught: []
+    achievements: 000000000000000000000000
   weightMult: 1
   lengthMult: 1
   weightLevel: 1
   lengthLevel: 1
   hookLevel: 1
-  achievements: 000000000000000000000000
   money: 0
   points: 0
+  finalScore: 0
   totalMoneyEarned: 0
   totalExtraDays: 0
   baseDebt: 1000
@@ -2025,18 +2037,9 @@ MonoBehaviour:
   bobberRb: {fileID: 1155587136}
   bobber: {fileID: 1155587138}
   bobberDefault: {fileID: 1745856042}
+  playerAnimator: {fileID: 1047403345}
   day: 0
   timeScale: 10
-  numAllCaught: 0
-  heaviestAllCaught: 0
-  lightestAllCaught: 3.4028235e+38
-  longestAllCaught: 0
-  shortestAllCaught: 3.4028235e+38
-  numCaught: 
-  heaviestCaught: []
-  lightestCaught: []
-  longestCaught: []
-  shortestCaught: []
 --- !u!4 &1353796855
 Transform:
   m_ObjectHideFlags: 0
@@ -2542,7 +2545,7 @@ Transform:
   m_GameObject: {fileID: 1745856041}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.68999994, y: 2.03, z: -0.0070373677}
+  m_LocalPosition: {x: -2.6, y: 2.79, z: -0.0070373677}
   m_LocalScale: {x: 0.15, y: 0.15, z: 0.15}
   m_ConstrainProportionsScale: 0
   m_Children: []
