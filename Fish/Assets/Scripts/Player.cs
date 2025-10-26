@@ -51,6 +51,7 @@ public class Player : MonoBehaviour
     public long currentDebt; // The active debt, including interest
     [SerializeField] private float interestRate = 1.05f; // 5% interest per day
     [SerializeField] private float debtAnimationDuration = 2.0f; // Animate over 2 seconds
+    [SerializeField] private float pointsAnimationDuration = 0.25f; // NEW: Animate points much faster
 
     // --- UI Animation Variables ---
     private double displayDebt; // Use double for smooth animation
@@ -690,7 +691,7 @@ public class Player : MonoBehaviour
 
         // --- 2. ANIMATE ALL VALUES (DEBT & POINTS) ---
         AnimateDisplayValue(ref displayDebt, targetDebt, debtAnimationDuration);
-        AnimateDisplayValue(ref displayPoints, targetPoints, debtAnimationDuration);
+        AnimateDisplayValue(ref displayPoints, targetPoints, pointsAnimationDuration);
 
         // --- 3. FORMAT THE FINAL STRING ---
         int hours = (int)(gameTimeInMinutes / 60);
@@ -701,7 +702,7 @@ public class Player : MonoBehaviour
         string debtString = $"DEBT: ${(long)displayDebt:N0}";
 
         // Format the points string
-        string pointsString = $"\nPOINTS: {(long)displayPoints:N0}";
+        string pointsString = $"\nPOINTS: {(long)Math.Round(displayPoints):N0}";
 
         // --- NEW: Format the prestige string ---
         string prestigeString = "";

@@ -2165,6 +2165,7 @@ MonoBehaviour:
   currentDebt: 0
   interestRate: 1.05
   debtAnimationDuration: 2
+  pointsAnimationDuration: 0.25
   lowCast: 100
   highCast: 300
   bobberRb: {fileID: 1155587136}
@@ -2566,6 +2567,7 @@ MonoBehaviour:
   - {fileID: 8275674101963034213, guid: e9e2d6b4dc7ea3046adf77f10146fbb4, type: 3}
   - {fileID: 3340495585770900257, guid: 2dd436c454a1f4440bd3150972757f87, type: 3}
   - {fileID: 2387293802714220385, guid: 8b71536adcdff874a873e6a7adcd12be, type: 3}
+  - {fileID: 734145985665959947, guid: e665f9e321a9ffa4fa66043b99db0959, type: 3}
 --- !u!1 &1649755081
 GameObject:
   m_ObjectHideFlags: 0
