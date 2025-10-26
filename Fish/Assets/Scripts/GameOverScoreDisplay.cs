@@ -22,6 +22,10 @@ public class GameOverScoreDisplay : MonoBehaviour
         {
             // Get the final score (which is the "last score" on this screen)
             long score = Player.instance.finalScore;
+            if (score > Player.instance.PlayerStats.highScore)
+            {
+                Player.instance.PlayerStats.highScore = score;
+            }
 
             // Start the animation
             StartCoroutine(AnimateScore(score));

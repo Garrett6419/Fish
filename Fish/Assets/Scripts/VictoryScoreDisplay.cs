@@ -22,6 +22,10 @@ public class VictoryScoreDisplay : MonoBehaviour
         {
             // Get the final score that was just calculated
             long score = Player.instance.finalScore;
+            if (score > Player.instance.PlayerStats.highScore)
+            {
+                Player.instance.PlayerStats.highScore = score;
+            }
 
             // Start the animation
             StartCoroutine(AnimateScore(score));
