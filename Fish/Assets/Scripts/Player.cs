@@ -40,17 +40,21 @@ public class Player : MonoBehaviour
     public long finalScore = 0; // Your end-game score
     public long totalMoneyEarned = 0; // Tracks all money ever earned
     public int totalExtraDays = 0; // Tracks all days saved across all runs
+    public int continueCount = 0; // Tracks NG+ level
+
+    // --- NEW: For DayOver screen ---
+    [HideInInspector]
+    public long pointsInterestEarned = 0;
 
     [Header("Debt")]
     [SerializeField] private long baseDebt = 1000000;
-    // --- NEW ---
-    // We use this const to calculate our difficulty multiplier
-    private const long STARTING_BASE_DEBT = 1000000;
-    // -----------
     public long currentDebt; // The active debt, including interest
     [SerializeField] private float interestRate = 1.05f; // 5% interest per day
     [SerializeField] private float debtAnimationDuration = 2.0f; // Animate over 2 seconds
+
+    // --- UI Animation Variables ---
     private double displayDebt; // Use double for smooth animation
+    private double displayPoints; // For points animation
 
     // --- Casting Fields ---
     [Header("Casting")]
@@ -135,9 +139,15 @@ public class Player : MonoBehaviour
             RelinkReferences();
             inFishingScene = true;
 
-            // This will now run correctly and solve the accidental cast
+            // This coroutine disables FISHING input (left click to cast)
             inputDisabled = true;
             StartCoroutine(EnableInputCooldown());
+
+            // --- NEW: Instantly sync all display values ---
+            // This prevents numbers from "catching up" when entering the scene
+            displayDebt = currentDebt;
+            displayPoints = points;
+            // ----------------------------------------------
         }
         else
         {
@@ -145,15 +155,19 @@ public class Player : MonoBehaviour
             inFishingScene = false;
         }
 
+        // This coroutine disables UI input (buttons) for all scenes
         StartCoroutine(EnableEventSystemCooldown());
     }
 
+    /// <summary>
+    /// Disables fishing input for a moment.
+    /// </summary>
     private IEnumerator EnableInputCooldown()
     {
         // Wait for a very short time
         yield return new WaitForSeconds(0.1f);
         inputDisabled = false;
-        Debug.Log("Input enabled.");
+        Debug.Log("Fishing input enabled.");
     }
 
     /// <summary>
@@ -162,18 +176,12 @@ public class Player : MonoBehaviour
     /// </summary>
     private IEnumerator EnableEventSystemCooldown()
     {
-        // Find the EventSystem in the newly loaded scene
         UnityEngine.EventSystems.EventSystem eventSystem = FindFirstObjectByType<UnityEngine.EventSystems.EventSystem>();
 
         if (eventSystem != null)
         {
-            // Disable it immediately
             eventSystem.enabled = false;
-
-            // Wait for a very short time
             yield return new WaitForSeconds(0.1f);
-
-            // Re-enable it (if it still exists)
             if (eventSystem != null)
             {
                 eventSystem.enabled = true;
@@ -213,7 +221,6 @@ public class Player : MonoBehaviour
                 PlayerStats.longestCaught = new float[fishTypeCount];
                 PlayerStats.shortestCaught = new float[fishTypeCount];
 
-                // Initialize lightest/shortest arrays to MaxValue
                 for (int i = 0; i < fishTypeCount; i++)
                 {
                     PlayerStats.lightestCaught[i] = float.MaxValue;
@@ -223,7 +230,6 @@ public class Player : MonoBehaviour
         }
         else
         {
-            // Only log an error if we are in the main scene
             if (SceneManager.GetActiveScene().name == "Beach")
             {
                 Debug.LogError("Could not find 'SceneReferences' object in the Beach scene!");
@@ -239,27 +245,23 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        // Set the starting time
         gameTimeInMinutes = dayStartMinutes;
-        // Set the current debt to the base debt on first start
         currentDebt = baseDebt;
 
-        // Sync the display debt to the real debt on start
+        // Sync all display variables to their real counterparts on start
         displayDebt = currentDebt;
+        displayPoints = points;
 
-        // Failsafe to link references if the game starts in the Beach scene
         RelinkReferences();
     }
 
     void Update()
     {
-        // 1. Check for UI / Paused State
         if (fishCaughtPanel != null && fishCaughtPanel.gameObject.activeInHierarchy)
         {
             return;
         }
 
-        // 2. Check for other scenes
         if (!inFishingScene)
         {
             return;
@@ -273,7 +275,7 @@ public class Player : MonoBehaviour
             return;
         }
 
-        // We now call this every frame to animate the debt
+        // We now call this every frame to animate all UI values
         if (dayTimeDebt != null)
             UpdateDayTimeDebtUI();
 
@@ -291,22 +293,18 @@ public class Player : MonoBehaviour
         {
             if (canCast && !isCasting)
             {
-                // 1. Can cast and not casting: CAST
                 Cast();
             }
             else if (isFishOn)
             {
-                // 2. Fish is on the line: REEL (success)
                 Reel();
             }
             else if (isCasting && !isFishOn)
             {
-                // 3. Casting but no fish on line: REEL (early)
                 RetractEarly();
             }
         }
 
-        // 6. Update Reaction Timer
         if (isFishOn)
         {
             reactionTimer += Time.deltaTime;
@@ -331,33 +329,21 @@ public class Player : MonoBehaviour
             playerAnimator.SetTrigger("Cast");
         }
 
-        // Start the new delay coroutine
-        StartCoroutine(LaunchBobberAfterDelay(0.5f)); //
+        StartCoroutine(LaunchBobberAfterDelay(0.5f));
     }
 
-    /// <summary>
-    /// This new coroutine waits for the cast animation
-    /// before launching the bobber and starting the fish timer.
-    /// </summary>
     private IEnumerator LaunchBobberAfterDelay(float delay)
     {
-        // 1. Wait for the animation to reach its peak
         yield return new WaitForSeconds(delay);
-
-        // 2. Check if we were interrupted (e.g., scene change, end day)
         if (!isCasting) yield break;
 
-        // 3. Now, launch the bobber
         Debug.Log("Launching bobber after delay.");
         bobber.gameObject.SetActive(true);
         bobber.transform.position = bobberDefault.position;
         bobberRb.AddForce(new(UnityEngine.Random.Range(lowCast, highCast), UnityEngine.Random.Range(lowCast, highCast)));
 
-        // Set state to Hidden. The bobber's own collision
-        // will set it to "Waiting" when it hits the water.
         bobber.SetState(Bobber.BobberState.Hidden);
 
-        // 4. Start the main fishing loop coroutine
         fishingCoroutine = StartCoroutine(CastTime());
     }
 
@@ -368,7 +354,6 @@ public class Player : MonoBehaviour
 
         while (isCasting)
         {
-            // 1. Waiting for a bite
             isFishOn = false;
             if (fishAlertUI != null) fishAlertUI.SetActive(false);
 
@@ -379,14 +364,12 @@ public class Player : MonoBehaviour
 
             if (!isCasting) yield break;
 
-            // 2. Fish on the line!
             Debug.Log($"Fish on! (ID: {hookedFishID})");
             isFishOn = true;
             reactionTimer = 0f;
             if (fishAlertUI != null) fishAlertUI.SetActive(true);
             bobber.SetState(Bobber.BobberState.AlertEarly);
 
-            // 3. Wait for the "perfect" window to end
             yield return new WaitForSeconds(perfectWindow);
 
             if (isFishOn)
@@ -394,10 +377,8 @@ public class Player : MonoBehaviour
                 bobber.SetState(Bobber.BobberState.AlertLate);
             }
 
-            // 4. Wait for the rest of the total window
             yield return new WaitForSeconds(totalWindow - perfectWindow);
 
-            // 5. Check if player was too slow
             if (isFishOn)
             {
                 Debug.Log("Fish got away! Too slow.");
@@ -413,14 +394,10 @@ public class Player : MonoBehaviour
             playerAnimator.SetTrigger("Reel");
         }
 
-        // Hide and reset the bobber
         bobber.gameObject.SetActive(false);
         bobber.SetState(Bobber.BobberState.Hidden);
 
-        // --- FIXED ---
-        bobberRb.linearVelocity = Vector2.zero; //
-        // -------------
-
+        bobberRb.linearVelocity = Vector2.zero;
         bobberRb.angularVelocity = 0f;
 
         Debug.Log("Reeling!");
@@ -444,9 +421,6 @@ public class Player : MonoBehaviour
         ProcessCatch(timingMultiplier);
     }
 
-    /// <summary>
-    /// Called when the player clicks to reel in, but no fish is on the line.
-    /// </summary>
     private void RetractEarly()
     {
         Debug.Log("Reeled in too early! Resetting cast.");
@@ -459,10 +433,7 @@ public class Player : MonoBehaviour
         bobber.gameObject.SetActive(false);
         bobber.SetState(Bobber.BobberState.Hidden);
 
-        // --- FIXED ---
-        bobberRb.linearVelocity = Vector2.zero; //
-        // -------------
-
+        bobberRb.linearVelocity = Vector2.zero;
         bobberRb.angularVelocity = 0f;
 
         if (fishingCoroutine != null) StopCoroutine(fishingCoroutine);
@@ -471,7 +442,7 @@ public class Player : MonoBehaviour
         isFishOn = false;
         if (fishAlertUI != null) fishAlertUI.SetActive(false);
 
-        canCast = true; // Allow the player to cast again
+        canCast = true;
     }
 
     private void ProcessCatch(float timingMultiplier)
@@ -480,7 +451,7 @@ public class Player : MonoBehaviour
         {
             Debug.LogError("ProcessCatch FAILED: hookedFishPrefab was null.");
             SetCanCast(true);
-            if (playerAnimator != null) playerAnimator.SetTrigger("Reset"); // Error handling
+            if (playerAnimator != null) playerAnimator.SetTrigger("Reset");
             return;
         }
 
@@ -489,7 +460,7 @@ public class Player : MonoBehaviour
         {
             Debug.LogError($"Hooked fish prefab '{hookedFishPrefab.name}' is missing Fish component!");
             SetCanCast(true);
-            if (playerAnimator != null) playerAnimator.SetTrigger("Reset"); // Error handling
+            if (playerAnimator != null) playerAnimator.SetTrigger("Reset");
             return;
         }
 
@@ -516,12 +487,12 @@ public class Player : MonoBehaviour
 
         long moneyEarnedThisCatch = (long)Mathf.Floor(totalValueSum);
 
-        // --- NEW SCALING POINT LOGIC ---
+        // --- THIS IS YOUR 5^N SCALING FACTOR ---
         long basePoints = (long)Mathf.Floor((hookLevel / 2f) + 0.5f);
-        // Ensure multiplier is at least 1
-        long difficultyMultiplier = Math.Max(1, (baseDebt / STARTING_BASE_DEBT));
+        // This multiplier scales with 5^continueCount
+        long difficultyMultiplier = (long)Math.Max(1, Mathf.Pow(5, continueCount));
         long pointsEarnedThisCatch = basePoints * difficultyMultiplier;
-        // -------------------------------
+        // ----------------------------------------
 
         // Update player totals
         money += moneyEarnedThisCatch;
@@ -529,18 +500,17 @@ public class Player : MonoBehaviour
         points += pointsEarnedThisCatch;
         currentDebt -= moneyEarnedThisCatch;
 
-        Debug.Log($"Caught {hookLevel} {hookedFishPrefab.name}(s) for ${moneyEarnedThisCatch} and {pointsEarnedThisCatch} points! (Multiplier: {difficultyMultiplier}x)");
+        Debug.Log($"Caught {hookLevel} {hookedFishPrefab.name}(s) for ${moneyEarnedThisCatch} and {pointsEarnedThisCatch} points! (Multiplier: 5^{continueCount} = {difficultyMultiplier}x)");
 
         if (fishCaughtPanel != null)
         {
-            // Pass the float value for display, and the new points value
             fishCaughtPanel.SetUp(hookedFishPrefab, displayWeight, displayLength, hookLevel, totalValueSum, pointsEarnedThisCatch);
         }
         else
         {
             Debug.LogError("ProcessCatch FAILED: fishCaughtPanel reference is null.");
             SetCanCast(true);
-            if (playerAnimator != null) playerAnimator.SetTrigger("Reset"); // Error handling
+            if (playerAnimator != null) playerAnimator.SetTrigger("Reset");
         }
     }
 
@@ -566,7 +536,6 @@ public class Player : MonoBehaviour
             }
         }
 
-        // We must reset the animator in BOTH cases.
         if (playerAnimator != null)
         {
             playerAnimator.SetTrigger("Reset");
@@ -588,47 +557,58 @@ public class Player : MonoBehaviour
 
         SerializeJson();
 
-        // Stop all fishing activity
         SetCanCast(false);
 
-        // Check for end of 7-day cycle OR if debt is paid off
         if (day >= 7 || currentDebt <= 0)
         {
             Debug.Log("End of day. Checking win/loss condition...");
 
-            // Win condition (debt is 0 or less)
             if (currentDebt <= 0)
             {
-                // --- MODIFIED: ADD SCALING SHOP POINT BONUS ---
+                // --- THIS IS YOUR DIMINISHING BONUS LOGIC ---
                 int daysRemaining = 7 - day;
                 if (daysRemaining > 0)
                 {
                     totalExtraDays += daysRemaining;
 
-                    // --- NEW SCALING BONUS ---
-                    long difficultyMultiplier = Math.Max(1, (baseDebt / STARTING_BASE_DEBT));
-                    long bonusShopPoints = daysRemaining * 250 * difficultyMultiplier;
+                    // 1. Calculate the base bonus (250, 125, 62, etc.)
+                    long baseBonusPoints = 0;
+                    double diminishingBonus = 250.0;
+                    for (int i = 0; i < daysRemaining; i++)
+                    {
+                        baseBonusPoints += (long)Math.Floor(diminishingBonus);
+                        diminishingBonus /= 2.0;
+                    }
+
+                    // 2. Calculate the scaling factor
+                    long difficultyMultiplier = (long)Math.Max(1, Mathf.Pow(5, continueCount));
+
+                    // 3. Calculate total bonus
+                    long bonusShopPoints = baseBonusPoints * difficultyMultiplier;
                     points += bonusShopPoints;
-                    Debug.Log($"Debt paid off {daysRemaining} days early! +{bonusShopPoints} shop points! (Multiplier: {difficultyMultiplier}x)");
-                    // -------------------------------
+                    Debug.Log($"Debt paid off {daysRemaining} days early! +{bonusShopPoints} shop points! (Base: {baseBonusPoints} * Multiplier: 5^{continueCount} = {difficultyMultiplier}x)");
+                    // ---------------------------------------------
                 }
 
                 finalScore = totalMoneyEarned * (1 + totalExtraDays);
                 Debug.Log($"Victory! Final Score: {finalScore} (Total Earned: {totalMoneyEarned} * (1 + {totalExtraDays} extra days))");
 
-                // Player wins
                 SceneManager.LoadScene("VictoryDialogue");
             }
             else
             {
-                // Player loses
                 Debug.Log("Defeat! Loading GameOverDialogue...");
                 SceneManager.LoadScene("GameOverDialogue");
             }
         }
         else
         {
-            // If it's not the end of Day 7 and debt isn't paid, proceed to normal DayOver scene
+            // --- NEW: Calculate 1.25x (25%) "Interest" on points ---
+            pointsInterestEarned = (long)(points * 0.25f);
+            points += pointsInterestEarned;
+            Debug.Log($"Added {pointsInterestEarned} 'Bonus Interest Points' (25% of {points - pointsInterestEarned})");
+            // ---------------------------------------------------
+
             SceneManager.LoadScene("DayOver");
         }
     }
@@ -642,8 +622,8 @@ public class Player : MonoBehaviour
         day++;
         gameTimeInMinutes = dayStartMinutes;
         fishCaughtToday = 0;
+        pointsInterestEarned = 0; // Reset bonus points tracker
 
-        // --- INTEREST CALCULATION ---
         if (currentDebt > 0)
         {
             long interestAdded = (long)(currentDebt * (interestRate - 1.0f));
@@ -654,7 +634,7 @@ public class Player : MonoBehaviour
         // Instantly snap the display debt to the new value (with interest)
         displayDebt = currentDebt;
 
-        canCast = true; // Re-enable casting
+        canCast = true;
 
         if (playerAnimator != null)
         {
@@ -673,18 +653,17 @@ public class Player : MonoBehaviour
     {
         Debug.Log("Continuing game! Base debt will be 10x.");
 
+        continueCount++; // Increment continue counter
         baseDebt *= 10;
         currentDebt = baseDebt;
 
         // Instantly sync display debt to new real debt
         displayDebt = currentDebt;
 
-        // Reset day to 1
         day = 1;
         gameTimeInMinutes = dayStartMinutes;
         fishCaughtToday = 0;
 
-        // Player keeps all other stats (money, points, totalMoneyEarned, totalExtraDays)
         canCast = true;
         SceneManager.LoadScene("Beach");
     }
@@ -696,41 +675,68 @@ public class Player : MonoBehaviour
     {
         if (dayTimeDebt == null) return;
 
-        // --- DEBT ANIMATION LOGIC ---
-        if (displayDebt != currentDebt)
-        {
-            double difference = displayDebt - currentDebt;
-            double speed = difference / debtAnimationDuration;
+        // --- 1. SET ANIMATION TARGETS ---
 
-            if (debtAnimationDuration <= 0)
-            {
-                displayDebt = currentDebt;
-            }
-            else
-            {
-                double step = speed * Time.deltaTime;
+        // Target for debt is the real debt (can be negative)
+        long targetDebt = currentDebt;
 
-                if (displayDebt > currentDebt)
-                {
-                    // Count down
-                    displayDebt = Math.Max(currentDebt, displayDebt - step);
-                }
-                else if (displayDebt < currentDebt)
-                {
-                    // Count up (for interest)
-                    displayDebt = Math.Min(currentDebt, displayDebt - step);
-                }
-            }
-        }
+        // Target for points is just the real points
+        long targetPoints = points;
 
+
+        // --- 2. ANIMATE ALL VALUES (DEBT & POINTS) ---
+        AnimateDisplayValue(ref displayDebt, targetDebt, debtAnimationDuration);
+        AnimateDisplayValue(ref displayPoints, targetPoints, debtAnimationDuration);
+
+        // --- 3. FORMAT THE FINAL STRING ---
         int hours = (int)(gameTimeInMinutes / 60);
         int minutes = (int)(gameTimeInMinutes % 60);
-
         string timeString = $"{hours:00}:{minutes:00}";
 
-        string debtString = $"${(long)displayDebt:N0}";
+        // Format the debt string (will show negative)
+        string debtString = $"DEBT: ${(long)displayDebt:N0}";
 
-        dayTimeDebt.text = $"DAY: {day}\tTIME: {timeString}\nDEBT: {debtString}";
+        // Format the points string
+        string pointsString = $"\nPOINTS: {(long)displayPoints:N0}";
+
+        // --- NEW: Format the prestige string ---
+        string prestigeString = "";
+        if (continueCount > 0)
+        {
+            prestigeString = $"\nPRESTIGE: {continueCount}";
+        }
+        // -------------------------------------
+
+        // Combine all strings
+        dayTimeDebt.text = $"DAY: {day}\tTIME: {timeString}\n{debtString}{pointsString}{prestigeString}";
+    }
+
+    /// <summary>
+    /// Helper function to animate a UI value towards its target over a set duration.
+    /// </summary>
+    private void AnimateDisplayValue(ref double displayValue, long targetValue, float duration)
+    {
+        if (displayValue == targetValue) return;
+
+        double difference = displayValue - targetValue;
+
+        if (duration <= 0)
+        {
+            displayValue = targetValue;
+            return;
+        }
+
+        double speed = difference / duration;
+        double step = speed * Time.deltaTime;
+
+        if (displayValue > targetValue)
+        {
+            displayValue = Math.Max(targetValue, displayValue - step);
+        }
+        else if (displayValue < targetValue)
+        {
+            displayValue = Math.Min(targetValue, displayValue - step);
+        }
     }
 
     #endregion
@@ -744,10 +750,7 @@ public class Player : MonoBehaviour
     /// </summary>
     private void UpdateStats(int id, float weight, float length)
     {
-        // --- 1. Update Daily Stats ---
         fishCaughtToday++;
-
-        // --- 2. Update Overall Stats ---
         PlayerStats.numAllCaught++;
 
         if (weight > PlayerStats.heaviestAllCaught) PlayerStats.heaviestAllCaught = weight;
@@ -755,7 +758,6 @@ public class Player : MonoBehaviour
         if (length > PlayerStats.longestAllCaught) PlayerStats.longestAllCaught = length;
         if (length < PlayerStats.shortestAllCaught) PlayerStats.shortestAllCaught = length;
 
-        // --- 3. Update Per-Fish Stats ---
         if (id < 0 || PlayerStats.numCaught == null || id >= PlayerStats.numCaught.Length)
         {
             Debug.LogError($"Invalid fish ID {id} or stats array not initialized!");
@@ -770,9 +772,6 @@ public class Player : MonoBehaviour
         if (length < PlayerStats.shortestCaught[id]) PlayerStats.shortestCaught[id] = length;
     }
 
-    /// <summary>
-    /// Public getter for the DayOver scene.
-    /// </summary>
     public int GetFishCaughtToday()
     {
         return fishCaughtToday;
@@ -809,6 +808,5 @@ public class Player : MonoBehaviour
     }
 
     #endregion
-
-    // -------------------------------------------------------------------
+}
 }
