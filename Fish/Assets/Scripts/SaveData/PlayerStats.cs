@@ -12,6 +12,7 @@ public class PlayerStats
     public float lightestAllCaught = float.MaxValue;
     public float longestAllCaught = 0;
     public float shortestAllCaught = float.MaxValue;
+    public long highScore = 0;
 
     [Header("Per-Fish-Type Stats")]
     public int[] numCaught;

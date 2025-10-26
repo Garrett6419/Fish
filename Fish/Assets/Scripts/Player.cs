@@ -252,6 +252,8 @@ public class Player : MonoBehaviour
         displayDebt = currentDebt;
         displayPoints = points;
 
+        PlayerStats = DataService.LoadData<PlayerStats>("/player-stats.json", EncryptionEnabled);
+
         RelinkReferences();
     }
 
@@ -565,6 +567,7 @@ public class Player : MonoBehaviour
 
             if (currentDebt <= 0)
             {
+                PlayerStats.achievements[7] = true;
                 // --- THIS IS YOUR DIMINISHING BONUS LOGIC ---
                 int daysRemaining = 7 - day;
                 if (daysRemaining > 0)
@@ -611,6 +614,7 @@ public class Player : MonoBehaviour
 
             SceneManager.LoadScene("DayOver");
         }
+        SerializeJson();
     }
 
     /// <summary>
@@ -808,5 +812,4 @@ public class Player : MonoBehaviour
     }
 
     #endregion
-}
 }

@@ -2,12 +2,15 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using TMPro;
 
 public class TrophyScript : MonoBehaviour
 {
     public Image[] blackouts= new Image[12];
     private GameObject PlayerObj;
     private Player MainPlayer;
+
+    public TMP_Text HSText;
 
     private Scene trophyScene;
 
@@ -46,17 +49,17 @@ public class TrophyScript : MonoBehaviour
     public void UpdateAchievements()
     {
         //10 Lb Fish
-        if (MainPlayer.PlayerStats.heaviestAllCaught >= 100)
+        if (MainPlayer.PlayerStats.heaviestAllCaught >= 1000)
         {
             MainPlayer.PlayerStats.achievements[0] = true;
 
             //100 Lb Fish
-            if (MainPlayer.PlayerStats.heaviestAllCaught >= 1000)
+            if (MainPlayer.PlayerStats.heaviestAllCaught >= 10000)
             {
                 MainPlayer.PlayerStats.achievements[1] = true;
 
                 //1k Lb Fish
-                if (MainPlayer.PlayerStats.heaviestAllCaught >= 10000)
+                if (MainPlayer.PlayerStats.heaviestAllCaught >= 100000)
                 {
                     MainPlayer.PlayerStats.achievements[2] = true;
                 }
@@ -65,17 +68,17 @@ public class TrophyScript : MonoBehaviour
         }
 
         //10 Meter Fish
-        if (MainPlayer.PlayerStats.longestAllCaught >= 100)
+        if (MainPlayer.PlayerStats.longestAllCaught >= 1000)
         {
             MainPlayer.PlayerStats.achievements[4] = true;
 
             //100 Meter Fish
-            if (MainPlayer.PlayerStats.longestAllCaught >= 1000)
+            if (MainPlayer.PlayerStats.longestAllCaught >= 10000)
             {
                 MainPlayer.PlayerStats.achievements[5] = true;
 
                 //1000 Meter Fish
-                if (MainPlayer.PlayerStats.longestAllCaught >= 10000)
+                if (MainPlayer.PlayerStats.longestAllCaught >= 100000)
                 {
                     MainPlayer.PlayerStats.achievements[6] = true;
                 }
@@ -101,16 +104,7 @@ public class TrophyScript : MonoBehaviour
         }
 
         //Checking if all fish have been caught
-        bool allFishCaught = true;
-        foreach (int num in MainPlayer.PlayerStats.numCaught)
-        {
-            if (num < 1)
-            {
-                allFishCaught = false;
-            }
-        }
-
-        if (allFishCaught)
+        if (MainPlayer.PlayerStats.highScore >= 50000000)
         {
             MainPlayer.PlayerStats.achievements[3] = true;
         }
@@ -120,6 +114,8 @@ public class TrophyScript : MonoBehaviour
         {
             MainPlayer.PlayerStats.achievements[7] = true;
         }
+
+        HSText.text = "High Score: " + MainPlayer.PlayerStats.highScore.ToString("N0");
 
         
     }

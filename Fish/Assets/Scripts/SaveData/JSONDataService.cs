@@ -11,6 +11,7 @@ public class JsonDataService : IDataService
     public bool SaveData<T>(string RelativePath, T Data, bool Encrypted)
     {
         string path = Application.persistentDataPath + RelativePath;
+        Debug.Log(path);
 
         try
         {
@@ -22,7 +23,7 @@ public class JsonDataService : IDataService
             Debug.Log("Creating a new file");
             using FileStream stream = File.Create(path);
             stream.Close();
-            File.WriteAllText(path, JsonConvert.SerializeObject(Data));
+            File.WriteAllText(path, JsonConvert.SerializeObject(Data, Formatting.Indented));
             return true;
         }
         catch(Exception e)
